@@ -8,4 +8,5 @@ class SnippetOperationsApplication
 
 fun main(args: Array<String>) {
     runApplication<SnippetOperationsApplication>(*args)
+
 }
