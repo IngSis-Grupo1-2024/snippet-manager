@@ -1,4 +1,4 @@
-package manager.bucket
+package manager.bucket.integration
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -15,7 +15,7 @@ constructor(
     private var urlForBucketV1: String,
 ) {
     @Bean
-    fun createRemoteBucketApi(): BucketManager {
-        return BucketManager(urlForBucketV1, rest)
+    fun createRemoteBucketApi(): RemoteBucket {
+        return RemoteBucket(urlForBucketV1, rest)
     }
 }
