@@ -1,11 +1,11 @@
-package com.example.snippetoperations
+package manager
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
-class SnippetOperationsApplication
+class App
 
 fun main(args: Array<String>) {
-    runApplication<SnippetOperationsApplication>(*args)
+    runApplication<App>(*args)
 }
