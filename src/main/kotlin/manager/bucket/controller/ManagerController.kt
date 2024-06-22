@@ -30,7 +30,7 @@ class ManagerController @Autowired constructor(private val service: ManagerServi
     override fun deleteSnippet(snippetId: String): ResponseEntity<String> {
         try{
             service.deleteSnippet(snippetId)
-            return ResponseEntity.ok("Snippet ${snippetId} deleted")
+            return ResponseEntity.ok("Snippet $snippetId deleted")
         } catch(e: HttpClientErrorException){
             return ResponseEntity.status(e.statusCode).body(e.message)
         }
