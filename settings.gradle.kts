@@ -1,1 +1,1 @@
-rootProject.name = "SnippetOperations"
+rootProject.name = "snippet-manager"
