@@ -1,4 +1,4 @@
-package manager.rules.model.input
+package manager.manager.rules.model.input
 
 import com.nimbusds.jose.shaded.gson.JsonObject
 

@@ -1,8 +1,7 @@
 package manager.rules.integration.configuration
 
-import manager.rest.BasicRest
+import manager.manager.rules.model.input.ConfigInput.Companion.getJson
 import manager.rules.model.dto.RulesOutput
-import manager.rules.model.input.ConfigInput.Companion.getJson
 import org.springframework.http.*
 import org.springframework.web.client.*
 
@@ -12,7 +11,7 @@ class RemoteSnippetConf(
 ): SnippetConf {
     override fun createDefaultConf(userId: String, token: String): ResponseEntity<String> {
         val url = "$snippetConfUrl/configuration"
-        val headers = BasicRest.getAuthHeaders(token)
+        val headers = manager.manager.rest.BasicRest.getAuthHeaders(token)
         headers.contentType = MediaType.APPLICATION_JSON;
 
         val request = HttpEntity<String>(getJsonDefault(userId), headers)
@@ -23,7 +22,7 @@ class RemoteSnippetConf(
                           token: String,
                           type: String): RulesOutput {
         val url = "$snippetConfUrl/configuration/rules?userId=$userId&ruleType=$type"
-        val headers = BasicRest.getAuthHeaders(token)
+        val headers = manager.manager.rest.BasicRest.getAuthHeaders(token)
         val entity = HttpEntity<String>(headers)
         val response = restTemplate.exchange(url, HttpMethod.GET, entity, RulesOutput::class.java)
         return response.body!!

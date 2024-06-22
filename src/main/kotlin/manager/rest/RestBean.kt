@@ -1,4 +1,4 @@
-package manager.rest
+package manager.manager.rest
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

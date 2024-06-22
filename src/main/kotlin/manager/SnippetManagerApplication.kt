@@ -1,18 +1,13 @@
-package com.example.snippetmanager
+package manager
 
-import bucket.BucketConfig
-import bucket.BucketManager
-import com.example.snippetmanager.snippet.CreateSnippet
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
-import org.springframework.web.client.RestOperations
-import org.springframework.web.client.RestTemplate
 
 @SpringBootApplication
 class SnippetManagerApplication
 
 fun main(args: Array<String>) {
-    runApplication<SnippetManagerApplication>()
+    runApplication<manager.SnippetManagerApplication>()
 
 //    val azuriteBucketV1 = System.getenv("AZURITE_BUCKET_V1")
 //    val restTemplate = RestTemplate()

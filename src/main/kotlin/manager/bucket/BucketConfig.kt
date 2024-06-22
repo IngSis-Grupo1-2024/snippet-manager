@@ -1,4 +1,4 @@
-package bucket
+package manager.bucket
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
