@@ -1,7 +1,6 @@
 package manager.rules.integration.configuration
 
 import manager.rest.BasicRest
-import manager.rest.exception.UnauthorizedException
 import manager.rules.model.dto.RulesOutput
 import manager.rules.model.input.ConfigInput.Companion.getJson
 import org.springframework.http.*
@@ -22,19 +21,12 @@ class RemoteSnippetConf(
 
     override fun getRules(userId: String,
                           token: String,
-                          type: String): ResponseEntity<RulesOutput> {
+                          type: String): RulesOutput {
         val url = "$snippetConfUrl/configuration/rules?userId=$userId&ruleType=$type"
         val headers = BasicRest.getAuthHeaders(token)
         val entity = HttpEntity<String>(headers)
-        try{
-            val response = restTemplate.exchange(url, HttpMethod.GET, entity, RulesOutput::class.java)
-            return response
-//            return restTemplate.getForEntity<RulesOutput>(url, entity)
-
-        } catch (e: HttpClientErrorException) {
-            if(e.statusCode == HttpStatus.UNAUTHORIZED) throw UnauthorizedException()
-            throw e
-        }
+        val response = restTemplate.exchange(url, HttpMethod.GET, entity, RulesOutput::class.java)
+        return response.body!!
     }
 
     private fun getJsonDefault(userId: String) =

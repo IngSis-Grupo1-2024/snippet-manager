@@ -4,4 +4,4 @@ import manager.rules.dto.RulesDTO
 
 class RulesOutput(
     val rules: List<RulesDTO>
-)
+): Output
