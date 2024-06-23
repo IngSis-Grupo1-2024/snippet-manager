@@ -39,8 +39,18 @@ class ManagerService
         )
     }
 
-    override fun getSnippet(snippetId: String): String {
-        return bucketAPI.getSnippet(snippetId)
+    override fun getSnippet(snippetId: String): SnippetDto {
+        val snippet = snippetRepository.findById(snippetId.toLong())
+        val content =  bucketAPI.getSnippet(snippetId)
+        return SnippetDto(
+            id=snippet.get().id!!,
+            name=snippet.get().name,
+            content = content,
+            compliance = ComplianceSnippet.PENDING,
+            author = snippet.get().userSnippet.name,
+            language = snippet.get().language,
+            extension = snippet.get().extension,
+        )
     }
 
     override fun deleteSnippet(snippetId: String) {

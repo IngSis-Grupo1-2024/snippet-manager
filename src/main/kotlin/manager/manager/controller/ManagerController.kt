@@ -34,12 +34,12 @@ class ManagerController @Autowired constructor(private val service: ManagerServi
         }
     }
 
-    override fun getSnippet(snippetId: String): ResponseEntity<String> {
+    override fun getSnippet(snippetId: String): ResponseEntity<Output> {
         try{
             val responseBody = service.getSnippet(snippetId)
             return ResponseEntity.ok(responseBody)
         } catch(e: HttpClientErrorException){
-            return ResponseEntity.status(e.statusCode).body(e.message)
+            return ResponseEntity.status(e.statusCode).body(ErrorOutput(e.message!!))
         }
     }
 

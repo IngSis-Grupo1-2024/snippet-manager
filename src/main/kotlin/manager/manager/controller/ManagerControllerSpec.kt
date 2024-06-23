@@ -18,7 +18,7 @@ interface ManagerControllerSpec {
     fun createSnippet(@AuthenticationPrincipal jwt: Jwt, @RequestBody snippetContent: CreateSnippet): ResponseEntity<Output>
 
     @GetMapping("{snippetId}")
-    fun getSnippet(@PathVariable snippetId: String) : ResponseEntity<String>
+    fun getSnippet(@PathVariable snippetId: String) : ResponseEntity<Output>
 
     @DeleteMapping("{snippetId}")
     fun deleteSnippet(@PathVariable snippetId: String) : ResponseEntity<String>

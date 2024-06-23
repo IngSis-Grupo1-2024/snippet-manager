@@ -9,7 +9,7 @@ import manager.manager.model.dto.SnippetListDto
 interface ManagerServiceSpec {
     fun createSnippet(input: CreateSnippet, userId: String): SnippetDto
 
-    fun getSnippet(snippetId: String) : String
+    fun getSnippet(snippetId: String) : SnippetDto
 
     fun deleteSnippet(snippetId: String)
 
