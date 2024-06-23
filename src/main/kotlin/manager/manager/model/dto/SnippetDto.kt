@@ -5,11 +5,11 @@ import manager.manager.model.enums.ComplianceSnippet
 import manager.manager.model.enums.SnippetLanguage
 
 class SnippetDto(
-    val id: Long,
     val name: String,
     val content: String,
-    val compliance: ComplianceSnippet,
-    val author: String,
     val language: SnippetLanguage,
-    val extension: String
+    val extension: String,
+    val id: Long,
+    val compliance: ComplianceSnippet,
+    val author: String
 ): Output

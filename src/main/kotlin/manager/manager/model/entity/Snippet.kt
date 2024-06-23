@@ -2,6 +2,7 @@ package manager.manager.model.entity
 
 import jakarta.persistence.*
 import manager.common.entity.BaseEntity
+import manager.manager.model.enums.ComplianceSnippet
 import manager.manager.model.enums.SnippetLanguage
 
 @Entity
@@ -13,6 +14,12 @@ data class Snippet(
     var language: SnippetLanguage,
     @Column
     var extension: String,
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    var userSnippet: UserSnippet,
+    @Column
+    @Enumerated(EnumType.STRING)
+    var status: ComplianceSnippet
 ): BaseEntity() {
-    protected constructor() : this("", SnippetLanguage.PRINTSCRIPT, "")
+    protected constructor() : this("", SnippetLanguage.PRINTSCRIPT, "", UserSnippet("", ""), ComplianceSnippet.PENDING)
 }

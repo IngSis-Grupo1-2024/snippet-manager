@@ -1,15 +1,18 @@
 package manager.manager.service
 
-import com.example.snippetmanager.snippet.CreateSnippet
+import manager.manager.model.input.CreateSnippet
 import com.example.snippetmanager.snippet.UpdateSnippet
 import manager.bucket.BucketAPI
 import manager.common.rest.exception.NotFoundException
 import manager.manager.model.dto.FileTypeDto
 import manager.manager.model.dto.SnippetDto
+import manager.manager.model.dto.SnippetListDto
 import manager.manager.model.entity.Snippet
+import manager.manager.model.entity.UserSnippet
 import manager.manager.model.enums.ComplianceSnippet
 import manager.manager.model.enums.FileType
 import manager.manager.repository.SnippetRepository
+import manager.manager.repository.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -18,17 +21,19 @@ class ManagerService
     @Autowired
     constructor(
         private val bucketAPI: BucketAPI,
-        private val snippetRepository: SnippetRepository
+        private val snippetRepository: SnippetRepository,
+        private val userRepository: UserRepository
     ): ManagerServiceSpec {
-    override fun createSnippet(input: CreateSnippet): SnippetDto {
-        val snippet = snippetRepository.save(Snippet(input.name, input.language, input.extension))
+    override fun createSnippet(input: CreateSnippet, userId: String): SnippetDto {
+        val user = userRepository.findByUserId(userId) ?: throw NotFoundException("User name was not found")
+        val snippet = snippetRepository.save(Snippet(input.name, input.language, input.extension, user, ComplianceSnippet.PENDING))
         bucketAPI.createSnippet(snippet.id.toString(), input.content)
         return SnippetDto(
             id=snippet.id!!,
             name=snippet.name,
             content = input.content,
             compliance = ComplianceSnippet.PENDING,
-            author = "AUTHOR NAME TO DO",
+            author = user.name,
             language = snippet.language,
             extension = snippet.extension,
         )
@@ -39,6 +44,7 @@ class ManagerService
     }
 
     override fun deleteSnippet(snippetId: String) {
+        this.snippetRepository.deleteById(snippetId.toLong())
         bucketAPI.deleteSnippet(snippetId)
     }
 
@@ -53,7 +59,7 @@ class ManagerService
                 name=snippet.get().name,
                 content = input.content,
                 compliance = ComplianceSnippet.PENDING,
-                author = "AUTHOR NAME TO DO",
+                author = snippet.get().userSnippet.name,
                 language = snippet.get().language,
                 extension = snippet.get().extension,
             )
@@ -76,5 +82,28 @@ class ManagerService
         return fileTypes.map { (language, extension) ->
             FileTypeDto(language.toString(), extension)
         }
+    }
+
+    override fun saveName(name: String, userId: String): String {
+        val user = userRepository.findByUserId(userId) ?: this.userRepository.save(UserSnippet(userId, name))
+        user.name = name
+        userRepository.save(user)
+        return "User saved successfully"
+    }
+
+    override fun getSnippetDescriptors(userId: String): SnippetListDto {
+        val user = userRepository.findByUserId(userId) ?: throw NotFoundException("User id was not found")
+        return SnippetListDto(user.snippet.map { snippet: Snippet ->
+            val content = bucketAPI.getSnippet(snippet.id.toString())
+            SnippetDto(
+                id=snippet.id!!,
+                name=snippet.name,
+                content = content,
+                compliance = ComplianceSnippet.PENDING,
+                author = user.name,
+                language = snippet.language,
+                extension = snippet.extension,
+            )
+        })
     }
 }
