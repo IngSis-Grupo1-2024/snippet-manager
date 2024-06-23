@@ -1,9 +1,9 @@
-package manager.bucket.service
+package manager.bucket
 
 import org.springframework.http.HttpStatus
 
-interface ManagerServiceSpec {
-    fun createSnippet(snippetContent: String): String?
+interface BucketAPI {
+    fun createSnippet(snippetId: String, bodyContent: String): String?
 
     fun getSnippet(snippetId: String) : String
 

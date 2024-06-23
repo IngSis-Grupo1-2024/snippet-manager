@@ -1,7 +1,7 @@
 package manager.rules.controller
 
-import manager.rest.exception.ErrorOutput
-import manager.rest.dto.Output
+import manager.common.rest.exception.ErrorOutput
+import manager.common.rest.dto.Output
 import manager.rules.model.dto.RulesOutput
 import manager.rules.service.RulesService
 import org.springframework.beans.factory.annotation.Autowired

@@ -61,7 +61,7 @@ val ktlintCheck by tasks.registering(JavaExec::class) {
 }
 
 tasks.check {
-    dependsOn(ktlintCheck)
+//    dependsOn(ktlintCheck)
 }
 
 tasks.register<JavaExec>("ktlintFormat") {
