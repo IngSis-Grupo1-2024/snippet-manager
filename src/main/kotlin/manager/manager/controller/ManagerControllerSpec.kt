@@ -3,6 +3,7 @@ package manager.manager.controller
 import com.example.snippetmanager.snippet.CreateSnippet
 import com.example.snippetmanager.snippet.UpdateSnippet
 import manager.common.rest.dto.Output
+import manager.manager.model.dto.FileTypeDto
 import manager.manager.model.dto.SnippetDto
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -21,4 +22,7 @@ interface ManagerControllerSpec {
 
     @PutMapping("{snippetId}")
     fun updateSnippet(@PathVariable snippetId: String, @RequestBody snippetContent: UpdateSnippet): ResponseEntity<Output>
+
+    @GetMapping("fileType")
+    fun getFileTypes(): ResponseEntity<List<FileTypeDto>>
 }

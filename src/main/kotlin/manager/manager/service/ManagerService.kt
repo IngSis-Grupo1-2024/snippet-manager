@@ -4,9 +4,11 @@ import com.example.snippetmanager.snippet.CreateSnippet
 import com.example.snippetmanager.snippet.UpdateSnippet
 import manager.bucket.BucketAPI
 import manager.common.rest.exception.NotFoundException
+import manager.manager.model.dto.FileTypeDto
 import manager.manager.model.dto.SnippetDto
 import manager.manager.model.entity.Snippet
 import manager.manager.model.enums.ComplianceSnippet
+import manager.manager.model.enums.FileType
 import manager.manager.repository.SnippetRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -67,5 +69,12 @@ class ManagerService
             language = snippet.get().language,
             extension = snippet.get().extension,
         )
+    }
+
+    override fun getFileTypes(): List<FileTypeDto> {
+        val fileTypes = FileType.getFileTypes()
+        return fileTypes.map { (language, extension) ->
+            FileTypeDto(language.toString(), extension)
+        }
     }
 }

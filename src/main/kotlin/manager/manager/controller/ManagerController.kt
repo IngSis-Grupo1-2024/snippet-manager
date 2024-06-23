@@ -5,6 +5,7 @@ import com.example.snippetmanager.snippet.UpdateSnippet
 import manager.common.rest.dto.Output
 import manager.common.rest.exception.ErrorOutput
 import manager.common.rest.exception.NotFoundException
+import manager.manager.model.dto.FileTypeDto
 import manager.manager.model.dto.SnippetDto
 import manager.manager.service.ManagerServiceSpec
 import org.springframework.beans.factory.annotation.Autowired
@@ -51,6 +52,10 @@ class ManagerController @Autowired constructor(private val service: ManagerServi
         } catch(e: NotFoundException){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorOutput(e.message!!))
         }
+    }
+
+    override fun getFileTypes(): ResponseEntity<List<FileTypeDto>> {
+        return ResponseEntity.status(HttpStatus.OK).body(this.service.getFileTypes())
     }
 
 
