@@ -1,4 +1,4 @@
-package manager.manager.model.entity
+package manager.manager.model.enums
 
 enum class SnippetLanguage {
     PRINTSCRIPT

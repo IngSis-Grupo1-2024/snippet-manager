@@ -2,6 +2,7 @@ package manager.manager.model.entity
 
 import jakarta.persistence.*
 import manager.common.entity.BaseEntity
+import manager.manager.model.enums.SnippetLanguage
 
 @Entity
 data class Snippet(
@@ -9,7 +10,9 @@ data class Snippet(
     var name: String,
     @Column
     @Enumerated(EnumType.STRING)
-    var language: SnippetLanguage
+    var language: SnippetLanguage,
+    @Column
+    var extension: String,
 ): BaseEntity() {
-    protected constructor() : this("", SnippetLanguage.PRINTSCRIPT)
+    protected constructor() : this("", SnippetLanguage.PRINTSCRIPT, "")
 }

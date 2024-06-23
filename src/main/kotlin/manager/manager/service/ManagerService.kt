@@ -6,10 +6,9 @@ import manager.bucket.BucketAPI
 import manager.common.rest.exception.NotFoundException
 import manager.manager.model.dto.SnippetDto
 import manager.manager.model.entity.Snippet
+import manager.manager.model.enums.ComplianceSnippet
 import manager.manager.repository.SnippetRepository
-import manager.rules.integration.configuration.SnippetConf
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 
 @Service
@@ -19,16 +18,17 @@ class ManagerService
         private val bucketAPI: BucketAPI,
         private val snippetRepository: SnippetRepository
     ): ManagerServiceSpec {
-    override fun createSnippet(snippetContent: CreateSnippet): SnippetDto {
-        val snippet = snippetRepository.save(Snippet(snippetContent.name, snippetContent.language))
-        bucketAPI.createSnippet(snippet.id.toString(), snippetContent.content)
+    override fun createSnippet(input: CreateSnippet): SnippetDto {
+        val snippet = snippetRepository.save(Snippet(input.name, input.language, input.extension))
+        bucketAPI.createSnippet(snippet.id.toString(), input.content)
         return SnippetDto(
             id=snippet.id!!,
             name=snippet.name,
-            content = snippetContent.content,
+            content = input.content,
+            compliance = ComplianceSnippet.PENDING,
+            author = "AUTHOR NAME TO DO",
             language = snippet.language,
-            createdAt = snippet.createdAt!!,
-            updateAt = snippet.updatedAt!!
+            extension = snippet.extension,
         )
     }
 
@@ -40,19 +40,20 @@ class ManagerService
         bucketAPI.deleteSnippet(snippetId)
     }
 
-    override fun updateSnippet(snippetId: String, snippetContent: UpdateSnippet): SnippetDto {
-        if(snippetContent.content != null){
+    override fun updateSnippet(snippetId: String, input: UpdateSnippet): SnippetDto {
+        if(input.content != null){
             val snippet = this.snippetRepository.findById(snippetId.toLong())
             if(snippet.isEmpty) throw NotFoundException("Snippet was not found")
             bucketAPI.deleteSnippet(snippetId)
-            bucketAPI.createSnippet(snippetId, snippetContent.content)
+            bucketAPI.createSnippet(snippetId, input.content)
             return SnippetDto(
                 id=snippet.get().id!!,
                 name=snippet.get().name,
-                content = snippetContent.content,
+                content = input.content,
+                compliance = ComplianceSnippet.PENDING,
+                author = "AUTHOR NAME TO DO",
                 language = snippet.get().language,
-                createdAt = snippet.get().createdAt!!,
-                updateAt = snippet.get().updatedAt!!
+                extension = snippet.get().extension,
             )
         }
         val snippet = this.snippetRepository.findById(snippetId.toLong())
@@ -61,9 +62,10 @@ class ManagerService
             id=snippet.get().id!!,
             name=snippet.get().name,
             content = "",
+            compliance = ComplianceSnippet.PENDING,
+            author = "AUTHOR NAME TO DO",
             language = snippet.get().language,
-            createdAt = snippet.get().createdAt!!,
-            updateAt = snippet.get().updatedAt!!
+            extension = snippet.get().extension,
         )
     }
 }
