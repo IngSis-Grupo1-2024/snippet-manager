@@ -1,7 +1,5 @@
 package manager.bucket
 
-import org.springframework.http.HttpStatus
-
 interface BucketAPI {
     fun createSnippet(snippetId: String, bodyContent: String): String?
 
