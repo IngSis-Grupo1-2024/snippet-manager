@@ -11,6 +11,7 @@ class FileType {
         private fun getFileType(language: SnippetLanguage): String {
             return when(language){
                 SnippetLanguage.PRINTSCRIPT -> "ps"
+                SnippetLanguage.JAVA -> ".java"
             }
         }
     }
