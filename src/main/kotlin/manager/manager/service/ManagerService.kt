@@ -75,29 +75,16 @@ class ManagerService
     }
 
     override fun updateSnippet(snippetId: String, input: UpdateSnippet): SnippetDto {
-        if(input.content != null){
-            val snippet = this.snippetRepository.findById(snippetId.toLong())
-            if(snippet.isEmpty) throw NotFoundException("Snippet was not found")
-            bucketAPI.deleteSnippet(snippetId)
-            bucketAPI.createSnippet(snippetId, input.content)
-            return SnippetDto(
-                id=snippet.get().id!!,
-                name=snippet.get().name,
-                content = input.content,
-                compliance = ComplianceSnippet.PENDING,
-                author = snippet.get().userSnippet.name,
-                language = snippet.get().language,
-                extension = snippet.get().extension,
-            )
-        }
         val snippet = this.snippetRepository.findById(snippetId.toLong())
         if(snippet.isEmpty) throw NotFoundException("Snippet was not found")
+        bucketAPI.deleteSnippet(snippetId)
+        bucketAPI.createSnippet(snippetId, input.content!!)
         return SnippetDto(
             id=snippet.get().id!!,
             name=snippet.get().name,
-            content = "",
+            content = input.content,
             compliance = ComplianceSnippet.PENDING,
-            author = "AUTHOR NAME TO DO",
+            author = snippet.get().userSnippet.name,
             language = snippet.get().language,
             extension = snippet.get().extension,
         )
