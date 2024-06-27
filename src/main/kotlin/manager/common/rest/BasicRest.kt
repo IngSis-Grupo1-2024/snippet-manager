@@ -1,4 +1,4 @@
-package manager.manager.rest
+package manager.common.rest
 
 import org.springframework.http.HttpHeaders
 
@@ -8,6 +8,9 @@ class BasicRest {
             val headers = HttpHeaders();
             headers.setBearerAuth(token)
             return headers
+        }
+        fun getUserId(token: String): String {
+            return token
         }
     }
 }

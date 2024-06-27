@@ -8,7 +8,7 @@ import java.time.LocalDateTime
 
 @Getter
 @MappedSuperclass
-abstract class BaseEntity {
+abstract class CommonEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     var id: Long? = null
