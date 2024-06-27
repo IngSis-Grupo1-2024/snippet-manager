@@ -1,15 +1,15 @@
-package manager.bucket
+package manager.common.bucket
 
+import manager.bucket.BucketAPI
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
-import org.springframework.http.ResponseEntity
 import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.client.RestClientException
 import org.springframework.web.client.RestTemplate
 
-class RemoteBucket(private val urlForBucket: String, private val rest: RestTemplate) : BucketAPI {
+class BucketManager(private val urlForBucket: String, private val rest: RestTemplate) : BucketAPI {
 
     override fun createSnippet(snippetId: String, bodyContent: String): String? {
         val fullUrl = "$urlForBucket/$snippetId"
