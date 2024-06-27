@@ -19,16 +19,6 @@ class SnippetConfImpl(
         return restTemplate.postForEntity<String>(url, request)
     }
 
-    override fun getRules(userId: String,
-                          token: String,
-                          type: String): RulesOutput {
-        val url = "$snippetConfUrl/configuration/rules?userId=$userId&ruleType=$type"
-        val headers = BasicRest.getAuthHeaders(token)
-        val entity = HttpEntity<String>(headers)
-        val response = restTemplate.exchange(url, HttpMethod.GET, entity, RulesOutput::class.java)
-        return response.body!!
-    }
-
     private fun getJsonDefault(userId: String, language: String) =
         getJson(userId, "1.0.0", language).toString()
 }
