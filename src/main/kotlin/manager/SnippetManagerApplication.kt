@@ -2,7 +2,6 @@ package manager
 
 import runner.manager.RunnerManager
 import com.example.snippetmanager.snippet.SnippetInfo
-import manager.bucket.RemoteBucket
 import manager.manager.model.enums.SnippetLanguage
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
