@@ -13,7 +13,7 @@ interface ManagerServiceSpec {
 
     fun getSnippet(snippetId: String) : SnippetDto
 
-    fun deleteSnippet(snippetId: String)
+    fun deleteSnippet(userId: String, token: String,  snippetId: String)
 
     fun updateSnippet(snippetId: String, input: UpdateSnippet): SnippetDto
     fun getFileTypes(): List<FileTypeDto>

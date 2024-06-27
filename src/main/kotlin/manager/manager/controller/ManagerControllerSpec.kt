@@ -22,7 +22,7 @@ interface ManagerControllerSpec {
     fun getSnippet(@PathVariable snippetId: String) : ResponseEntity<Output>
 
     @DeleteMapping("{snippetId}")
-    fun deleteSnippet(@PathVariable snippetId: String) : ResponseEntity<String>
+    fun deleteSnippet(@AuthenticationPrincipal jwt: Jwt, @PathVariable snippetId: String) : ResponseEntity<String>
 
     @PutMapping("{snippetId}")
     fun updateSnippet(@PathVariable snippetId: String, @RequestBody snippetContent: UpdateSnippet): ResponseEntity<Output>

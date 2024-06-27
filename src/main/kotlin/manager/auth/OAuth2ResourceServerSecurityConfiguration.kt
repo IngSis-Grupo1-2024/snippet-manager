@@ -27,7 +27,6 @@ class OAuth2ResourceServerSecurityConfiguration(@Value("\${auth0.audience}")
     fun filterChain(http: HttpSecurity): SecurityFilterChain {
         http.authorizeHttpRequests {
             it
-                .requestMatchers(GET, "/fileType").hasAuthority("SCOPE_read:snippet")
                 .anyRequest().authenticated()
         }
             .oauth2ResourceServer { it.jwt(withDefaults()) }

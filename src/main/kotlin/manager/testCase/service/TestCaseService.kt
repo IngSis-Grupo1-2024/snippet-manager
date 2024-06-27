@@ -32,7 +32,7 @@ class TestCaseService
         val snippetId: String = snippetConf.getSnippetId(token, testCaseId) ?: return
         if (userIsNotTheOwner(snippetId, userId, token))
             throw BadReqException("The user has no permissions " +
-                    "for creation or update of the test")
+                    "for deleting the test")
 
         snippetConf.deleteTestCase(token, testCaseId)
     }

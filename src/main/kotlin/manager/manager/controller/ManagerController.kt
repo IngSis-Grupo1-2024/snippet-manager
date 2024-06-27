@@ -7,6 +7,8 @@ import manager.common.rest.exception.ErrorOutput
 import manager.common.rest.exception.NotFoundException
 import manager.manager.model.dto.*
 import manager.common.rest.BasicRest.Companion.getUserId
+import manager.manager.integration.permission.SnippetPerm
+import manager.manager.model.enums.PermissionType
 import manager.manager.model.input.ShareSnippetInput
 import manager.manager.service.ManagerServiceSpec
 import org.springframework.beans.factory.annotation.Autowired
@@ -17,7 +19,12 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.client.HttpClientErrorException
 
 @RestController
-class ManagerController @Autowired constructor(private val service: ManagerServiceSpec): ManagerControllerSpec {
+class ManagerController
+    @Autowired
+    constructor(
+        private val service: ManagerServiceSpec,
+        private val snippetPerm: SnippetPerm
+    ): ManagerControllerSpec {
     override fun saveName(jwt: Jwt, name: String): ResponseEntity<String> {
         val responseBody = this.service.saveName(name.substring(0, name.length-1), getUserId(jwt.subject))
         return ResponseEntity.status(HttpStatus.CREATED).body(responseBody)
@@ -43,9 +50,9 @@ class ManagerController @Autowired constructor(private val service: ManagerServi
         }
     }
 
-    override fun deleteSnippet(snippetId: String): ResponseEntity<String> {
+    override fun deleteSnippet(jwt: Jwt, snippetId: String): ResponseEntity<String> {
         try{
-            service.deleteSnippet(snippetId)
+            service.deleteSnippet(getUserId(jwt.subject), jwt.tokenValue, snippetId)
             return ResponseEntity.ok("Snippet $snippetId deleted")
         } catch(e: HttpClientErrorException){
             return ResponseEntity.status(e.statusCode).body(e.message)

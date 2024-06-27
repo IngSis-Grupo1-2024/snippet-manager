@@ -69,7 +69,8 @@ class ManagerService
         )
     }
 
-    override fun deleteSnippet(snippetId: String) {
+    override fun deleteSnippet(userId: String, token: String, snippetId: String) {
+        if(userIsNotTheOwner(snippetId, userId, token))
         this.snippetRepository.deleteById(snippetId.toLong())
         bucketAPI.deleteSnippet(snippetId)
     }
@@ -155,5 +156,14 @@ class ManagerService
         val addPermDto = AddPermDto(PermissionType.R, shareSnippet.snippetId.toLong(), shareSnippet.userId, userId)
         snippetPerm.addPermission(addPermDto, token)
         return getSnippet(shareSnippet.snippetId)
+    }
+
+    private fun userIsNotTheOwner(
+        snippetId: String,
+        userId: String,
+        token: String
+    ): Boolean {
+        val permissionType: PermissionType = snippetPerm.getPermissionType(snippetId, userId, token)
+        return permissionType != PermissionType.OWNER
     }
 }
