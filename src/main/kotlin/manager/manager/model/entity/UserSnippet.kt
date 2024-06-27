@@ -1,7 +1,7 @@
 package manager.manager.model.entity
 
 import jakarta.persistence.*
-import manager.common.entity.BaseEntity
+import manager.common.entity.CommonEntity
 
 @Entity
 data class UserSnippet(
@@ -9,9 +9,9 @@ data class UserSnippet(
     var userId: String,
     @Column
     var name: String,
+
     @OneToMany(mappedBy = "userSnippet")
     val snippet: List<Snippet> = ArrayList()
-
-): BaseEntity() {
+): CommonEntity() {
     protected constructor() : this("", "")
 }

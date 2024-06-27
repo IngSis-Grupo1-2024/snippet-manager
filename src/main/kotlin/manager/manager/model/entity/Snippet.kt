@@ -1,7 +1,7 @@
 package manager.manager.model.entity
 
 import jakarta.persistence.*
-import manager.common.entity.BaseEntity
+import manager.common.entity.CommonEntity
 import manager.manager.model.enums.ComplianceSnippet
 import manager.manager.model.enums.SnippetLanguage
 
@@ -20,6 +20,6 @@ data class Snippet(
     @Column
     @Enumerated(EnumType.STRING)
     var status: ComplianceSnippet
-): BaseEntity() {
+): CommonEntity() {
     protected constructor() : this("", SnippetLanguage.PRINTSCRIPT, "", UserSnippet("", ""), ComplianceSnippet.PENDING)
 }
