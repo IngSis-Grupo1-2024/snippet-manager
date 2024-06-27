@@ -16,6 +16,6 @@ class SnippetConfBean
     ){
         @Bean
         fun createSnippetConf(): SnippetConf {
-            return RemoteSnippetConf(restTemplate, snippetConfUrl)
+            return SnippetConfImpl(restTemplate, snippetConfUrl)
         }
 }

@@ -2,6 +2,7 @@ package manager.rules.controller
 
 import manager.common.rest.exception.ErrorOutput
 import manager.common.rest.dto.Output
+import manager.common.rest.BasicRest.Companion.getUserId
 import manager.rules.model.dto.RulesOutput
 import manager.rules.service.RulesService
 import org.springframework.beans.factory.annotation.Autowired
@@ -23,34 +24,7 @@ class RulesController
 
     @PostMapping("/default")
     fun createDefaultConfiguration(@AuthenticationPrincipal jwt: Jwt): ResponseEntity<String> {
-        val userId=jwt.subject.substring(6)
+        val userId=getUserId(jwt.subject)
         return rulesService.createDefaultConf(userId, jwt.tokenValue)
-    }
-    @GetMapping("/linting")
-    fun getLintingRules(@AuthenticationPrincipal jwt: Jwt): ResponseEntity<out Output> {
-        val getRules = { userId: String ->
-            ResponseEntity.ok(rulesService.getLintingRules(userId, jwt.tokenValue))
-        }
-        return getResponse(jwt, getRules)
-    }
-    @GetMapping("/formatting")
-    fun getFormattingRules(@AuthenticationPrincipal jwt: Jwt): ResponseEntity<out Output> {
-        val getRules = { userId: String ->
-            ResponseEntity.ok(rulesService.getFormattingRules(userId, jwt.tokenValue))
-        }
-        return getResponse(jwt, getRules)
-    }
-
-    private fun getResponse(
-        jwt: Jwt,
-        getRules: (String) -> ResponseEntity<RulesOutput>
-    ): ResponseEntity<out Output> {
-        try {
-            val userId = jwt.subject.substring(6)
-            return getRules(userId)
-        } catch (e: HttpClientErrorException) {
-            val response = ResponseEntity.status(e.statusCode)
-            return response.body(ErrorOutput(String(e.responseBodyAsByteArray)))
-        }
     }
 }

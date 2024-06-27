@@ -1,5 +1,6 @@
 package manager.rules.service
 
+import manager.manager.model.enums.SnippetLanguage
 import manager.rules.integration.configuration.SnippetConf
 import manager.rules.model.dto.RulesOutput
 import org.springframework.beans.factory.annotation.Autowired
@@ -13,13 +14,9 @@ class RulesService
         private val snippetConf: SnippetConf
     ) {
         fun createDefaultConf(userId: String, token: String) : ResponseEntity<String> {
-            return snippetConf.createDefaultConf(userId, token)
+            SnippetLanguage.entries.forEach { snippetLanguage ->
+                snippetConf.createDefaultConf(userId, token, snippetLanguage.toString())
+            }
+            return ResponseEntity.ok("")
         }
-
-    fun getLintingRules(userId: String, tokenValue: String): RulesOutput {
-        return snippetConf.getRules(userId, tokenValue, "LINTING")
-    }
-    fun getFormattingRules(userId: String, tokenValue: String): RulesOutput {
-        return snippetConf.getRules(userId, tokenValue, "FORMATTING")
-    }
 }
