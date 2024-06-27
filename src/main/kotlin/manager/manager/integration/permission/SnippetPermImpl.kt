@@ -4,6 +4,7 @@ import com.nimbusds.jose.shaded.gson.JsonObject
 import manager.common.rest.BasicRest
 import manager.manager.integration.permission.dto.SnippetIds
 import manager.manager.model.dto.AddPermDto
+import manager.manager.model.enums.PermissionType
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.http.MediaType
@@ -24,6 +25,14 @@ class SnippetPermImpl(
 
         val request = HttpEntity<String>(getJson(addPermDto), headers)
         restTemplate.postForEntity<String>(url, request)
+    }
+
+    override fun getPermissionType(snippetId: String, userId: String, token: String): PermissionType {
+        val url = "$snippetPermUrl/get_permission_type/$snippetId/$userId"
+        val headers = BasicRest.getAuthHeaders(token)
+        val request = HttpEntity<String>(headers)
+        val response = restTemplate.exchange(url, HttpMethod.GET, request, PermissionType::class.java)
+        return response.body!!
     }
 
     override fun getSharedSnippets(userId: String, token: String): List<Long> {
