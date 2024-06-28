@@ -7,8 +7,6 @@ import manager.common.rest.exception.ErrorOutput
 import manager.common.rest.exception.NotFoundException
 import manager.manager.model.dto.*
 import manager.common.rest.BasicRest.Companion.getUserId
-import manager.manager.integration.permission.SnippetPerm
-import manager.manager.model.enums.PermissionType
 import manager.manager.model.input.ShareSnippetInput
 import manager.manager.service.ManagerServiceSpec
 import org.springframework.beans.factory.annotation.Autowired
@@ -22,8 +20,7 @@ import org.springframework.web.client.HttpClientErrorException
 class ManagerController
     @Autowired
     constructor(
-        private val service: ManagerServiceSpec,
-        private val snippetPerm: SnippetPerm
+        private val service: ManagerServiceSpec
     ): ManagerControllerSpec {
     override fun saveName(jwt: Jwt, name: String): ResponseEntity<String> {
         val responseBody = this.service.saveName(name.substring(0, name.length-1), getUserId(jwt.subject))

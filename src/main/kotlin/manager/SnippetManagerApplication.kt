@@ -1,11 +1,7 @@
 package manager
 
-import runner.manager.RunnerManager
-import com.example.snippetmanager.snippet.SnippetInfo
-import manager.manager.model.enums.SnippetLanguage
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
-import org.springframework.web.client.RestTemplate
 
 @SpringBootApplication
 class SnippetManagerApplication
@@ -26,10 +22,10 @@ fun main(args: Array<String>) {
 //    println(response.headers)
 //    println(response.body)
 
-//    val runner = RunnerManager(restTemplate, "http://localhost:8084")
+//    val manager.runner = RunnerManager(restTemplate, "http://localhost:8084")
 
 //    val snippetInfo = SnippetInfo(content = response, extension = ".ps", input = listOf(), language = SnippetLanguage.PRINTSCRIPT, name = "basic-snippet", version = "v1")
 
-//    val runningOutput = runner.runSnippet(snippetInfo)
+//    val runningOutput = manager.runner.runSnippet(snippetInfo)
 
 }
