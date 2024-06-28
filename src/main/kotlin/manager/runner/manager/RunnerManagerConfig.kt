@@ -1,4 +1,4 @@
-package runner.manager
+package manager.runner.manager
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -10,13 +10,12 @@ import org.springframework.web.client.RestTemplate
 class RunnerManagerConfig
     @Autowired
     constructor(
-        rest: RestTemplate,
-        @Value("\${runner.url}") runnerUrl: String,
+        private val rest: RestTemplate,
+        @Value("\${manager.runner.url}")
+        private val runnerUrl: String,
     ) {
-        init {
-            @Bean
-            fun createRunnerManager(): RunnerManager {
-                return RunnerManager(rest, runnerUrl)
-            }
+        @Bean
+        fun createRunnerManager(): Runner {
+            return RunnerManager(rest, runnerUrl)
         }
-    }
+}
