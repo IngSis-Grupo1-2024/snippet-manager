@@ -27,5 +27,4 @@ fun main(args: Array<String>) {
 //    val snippetInfo = SnippetInfo(content = response, extension = ".ps", input = listOf(), language = SnippetLanguage.PRINTSCRIPT, name = "basic-snippet", version = "v1")
 
 //    val runningOutput = manager.runner.runSnippet(snippetInfo)
-
 }

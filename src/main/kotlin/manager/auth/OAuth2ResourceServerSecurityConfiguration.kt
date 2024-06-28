@@ -1,11 +1,8 @@
 package manager.auth
 
-import manager.auth.AudienceValidator
-import manager.auth.CorsConfig
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.http.HttpMethod.GET
 import org.springframework.security.config.Customizer.withDefaults
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
@@ -19,10 +16,12 @@ import org.springframework.security.web.SecurityFilterChain
 
 @Configuration
 @EnableWebSecurity
-class OAuth2ResourceServerSecurityConfiguration(@Value("\${auth0.audience}")
-                                                val audience: String,
-                                                @Value("\${spring.security.oauth2.resourceserver.jwt.issuer-uri}")
-                                                val issuer: String,) {
+class OAuth2ResourceServerSecurityConfiguration(
+    @Value("\${auth0.audience}")
+    val audience: String,
+    @Value("\${spring.security.oauth2.resourceserver.jwt.issuer-uri}")
+    val issuer: String,
+) {
     @Bean
     fun filterChain(http: HttpSecurity): SecurityFilterChain {
         http.authorizeHttpRequests {

@@ -8,14 +8,14 @@ import org.springframework.web.client.RestTemplate
 
 @Component
 class SnippetPermBean
-@Autowired
-constructor(
-    private val restTemplate: RestTemplate,
-    @Value("\${snippet_perm_url}")
-    private val snippetPermUrl: String
-){
-    @Bean
-    fun createSnippetPerm(): SnippetPerm {
-        return SnippetPermImpl(restTemplate, snippetPermUrl)
+    @Autowired
+    constructor(
+        private val restTemplate: RestTemplate,
+        @Value("\${snippet_perm_url}")
+        private val snippetPermUrl: String,
+    ) {
+        @Bean
+        fun createSnippetPerm(): SnippetPerm {
+            return SnippetPermImpl(restTemplate, snippetPermUrl)
+        }
     }
-}

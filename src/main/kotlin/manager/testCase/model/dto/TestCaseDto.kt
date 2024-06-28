@@ -7,5 +7,5 @@ data class TestCaseDto(
     val name: String,
     val input: List<String>?,
     val output: List<String>?,
-    val envVars: String
+    val envVars: String,
 ) : Output

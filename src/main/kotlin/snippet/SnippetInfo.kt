@@ -2,7 +2,7 @@ package snippet
 
 import manager.manager.model.enums.SnippetLanguage
 
-data class SnippetInfo (
+data class SnippetInfo(
     val name: String,
     val content: String,
     val language: SnippetLanguage,

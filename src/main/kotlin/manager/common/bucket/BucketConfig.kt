@@ -8,14 +8,14 @@ import org.springframework.web.client.RestTemplate
 
 @Component
 class BucketConfig
-@Autowired
-constructor(
-    private val rest: RestTemplate,
-    @Value("\${azuriteBucket}")
-    private var urlForBucketV1: String,
-) {
-    @Bean
-    fun createRemoteBucketApi(): BucketManager {
-        return BucketManager(urlForBucketV1, rest)
+    @Autowired
+    constructor(
+        private val rest: RestTemplate,
+        @Value("\${azuriteBucket}")
+        private var urlForBucketV1: String,
+    ) {
+        @Bean
+        fun createRemoteBucketApi(): BucketManager {
+            return BucketManager(urlForBucketV1, rest)
+        }
     }
-}

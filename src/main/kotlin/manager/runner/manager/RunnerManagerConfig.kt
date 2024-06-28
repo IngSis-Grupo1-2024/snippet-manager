@@ -18,4 +18,4 @@ class RunnerManagerConfig
         fun createRunnerManager(): Runner {
             return RunnerManager(rest, runnerUrl)
         }
-}
+    }
