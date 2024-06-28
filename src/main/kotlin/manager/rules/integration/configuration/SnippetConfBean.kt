@@ -12,10 +12,10 @@ class SnippetConfBean
     constructor(
         private val restTemplate: RestTemplate,
         @Value("\${snippet_conf_url}")
-        private val snippetConfUrl: String
-    ){
+        private val snippetConfUrl: String,
+    ) {
         @Bean
         fun createSnippetConf(): SnippetConf {
             return SnippetConfImpl(restTemplate, snippetConfUrl)
         }
-}
+    }
