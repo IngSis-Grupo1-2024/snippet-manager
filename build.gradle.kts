@@ -37,6 +37,7 @@ dependencies {
     annotationProcessor("org.projectlombok:lombok")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    implementation("com.google.code.gson:gson:2.8.8")
 
 //    implementation("PrintScript:utils:1.1.0-SNAPSHOT")
 }
