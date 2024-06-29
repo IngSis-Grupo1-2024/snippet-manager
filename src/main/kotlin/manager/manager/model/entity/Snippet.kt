@@ -19,7 +19,7 @@ data class Snippet(
     var userSnippet: UserSnippet,
     @Column
     @Enumerated(EnumType.STRING)
-    var status: ComplianceSnippet
-): CommonEntity() {
-    protected constructor() : this("", SnippetLanguage.PRINTSCRIPT, "", UserSnippet("", ""), ComplianceSnippet.PENDING)
+    var status: ComplianceSnippet,
+) : CommonEntity() {
+    constructor() : this("", SnippetLanguage.PRINTSCRIPT, "", UserSnippet("", ""), ComplianceSnippet.PENDING)
 }

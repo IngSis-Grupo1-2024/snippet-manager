@@ -17,6 +17,15 @@ java {
 
 repositories {
     mavenCentral()
+
+    maven {
+        name = "GitHubPackagesClassRedisStreams"
+        url = uri("https://maven.pkg.github.com/austral-ingsis/class-redis-streams")
+        credentials {
+            username = project.findProperty("gpr.user") as String? ?: System.getenv("GITHUB_ACTOR") as String
+            password = project.findProperty("gpr.key") as String? ?: System.getenv("GITHUB_TOKEN") as String
+        }
+    }
 }
 
 dependencies {
@@ -37,7 +46,9 @@ dependencies {
     annotationProcessor("org.projectlombok:lombok")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-
+    implementation("org.springframework.boot:spring-boot-starter-data-redis")
+    implementation("org.austral.ingsis:redis-streams-mvc:0.1.13")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
 //    implementation("PrintScript:utils:1.1.0-SNAPSHOT")
 }
 

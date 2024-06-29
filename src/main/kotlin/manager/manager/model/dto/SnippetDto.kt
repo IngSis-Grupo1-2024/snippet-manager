@@ -11,5 +11,5 @@ class SnippetDto(
     val extension: String,
     val id: Long,
     val compliance: ComplianceSnippet,
-    val author: String
-): Output
+    val author: String,
+) : Output

@@ -30,5 +30,6 @@ interface SnippetConf {
     fun getRules(
         userId: String,
         token: String,
-        type: String): RulesOutput
+        type: String,
+    ): RulesOutput
 }

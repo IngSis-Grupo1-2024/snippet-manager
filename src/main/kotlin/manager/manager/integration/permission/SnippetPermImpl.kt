@@ -13,21 +13,25 @@ import org.springframework.web.client.postForEntity
 
 class SnippetPermImpl(
     private val restTemplate: RestTemplate,
-    private val snippetPermUrl: String
-): SnippetPerm {
+    private val snippetPermUrl: String,
+) : SnippetPerm {
     override fun addPermission(
         addPermDto: AddPermDto,
-        token: String
-    ){
+        token: String,
+    ) {
         val url = "$snippetPermUrl/map_permission"
         val headers = BasicRest.getAuthHeaders(token)
-        headers.contentType = MediaType.APPLICATION_JSON;
+        headers.contentType = MediaType.APPLICATION_JSON
 
         val request = HttpEntity<String>(getJson(addPermDto), headers)
         restTemplate.postForEntity<String>(url, request)
     }
 
-    override fun getPermissionType(snippetId: String, userId: String, token: String): PermissionType {
+    override fun getPermissionType(
+        snippetId: String,
+        userId: String,
+        token: String,
+    ): PermissionType {
         val url = "$snippetPermUrl/get_permission_type/$snippetId/$userId"
         val headers = BasicRest.getAuthHeaders(token)
         val request = HttpEntity<String>(headers)
@@ -35,7 +39,10 @@ class SnippetPermImpl(
         return response.body!!
     }
 
-    override fun getSharedSnippets(userId: String, token: String): List<Long> {
+    override fun getSharedSnippets(
+        userId: String,
+        token: String,
+    ): List<Long> {
         val url = "$snippetPermUrl/shared"
         val headers = BasicRest.getAuthHeaders(token)
         val request = HttpEntity<String>(headers)

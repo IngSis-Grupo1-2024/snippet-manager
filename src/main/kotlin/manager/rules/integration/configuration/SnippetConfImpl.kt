@@ -88,9 +88,11 @@ class SnippetConfImpl(
         return json.toString()
     }
 
-    override fun getRules(userId: String,
-                          token: String,
-                          type: String): RulesOutput {
+    override fun getRules(
+        userId: String,
+        token: String,
+        type: String,
+    ): RulesOutput {
         val url = "$snippetConfUrl/configuration/rules?userId=$userId&ruleType=$type"
         val headers = BasicRest.getAuthHeaders(token)
         val entity = HttpEntity<String>(headers)
