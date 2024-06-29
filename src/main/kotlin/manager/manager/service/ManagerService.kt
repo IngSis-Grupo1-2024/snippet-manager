@@ -71,7 +71,7 @@ class ManagerService
                 id = snippet.get().id!!,
                 name = snippet.get().name,
                 content = content,
-                compliance = ComplianceSnippet.PENDING,
+                compliance = snippet.get().status,
                 author = snippet.get().userSnippet.name,
                 language = snippet.get().language,
                 extension = snippet.get().extension,
