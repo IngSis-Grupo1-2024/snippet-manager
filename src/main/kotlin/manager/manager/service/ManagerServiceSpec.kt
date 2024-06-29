@@ -26,6 +26,8 @@ interface ManagerServiceSpec {
     fun updateSnippet(
         snippetId: String,
         input: UpdateSnippet,
+        userId: String,
+        token: String,
     ): SnippetDto
 
     fun getFileTypes(): List<FileTypeDto>

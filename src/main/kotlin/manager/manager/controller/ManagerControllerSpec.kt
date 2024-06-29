@@ -39,6 +39,7 @@ interface ManagerControllerSpec {
     fun updateSnippet(
         @PathVariable snippetId: String,
         @RequestBody snippetContent: UpdateSnippet,
+        @AuthenticationPrincipal jwt: Jwt,
     ): ResponseEntity<Output>
 
     @GetMapping("fileType")

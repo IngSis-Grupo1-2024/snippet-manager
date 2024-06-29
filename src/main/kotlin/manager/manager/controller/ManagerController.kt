@@ -68,9 +68,10 @@ class ManagerController
         override fun updateSnippet(
             snippetId: String,
             snippetContent: UpdateSnippet,
+            jwt: Jwt,
         ): ResponseEntity<Output> {
             try {
-                val responseBody: SnippetDto = service.updateSnippet(snippetId, snippetContent)
+                val responseBody: SnippetDto = service.updateSnippet(snippetId, snippetContent, getUserId(jwt.subject), jwt.tokenValue)
                 return ResponseEntity.ok(responseBody)
             } catch (e: HttpClientErrorException) {
                 return ResponseEntity.status(e.statusCode).body(ErrorOutput(e.message!!))

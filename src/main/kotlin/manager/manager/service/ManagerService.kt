@@ -2,6 +2,7 @@ package manager.manager.service
 
 import com.example.snippetmanager.snippet.UpdateSnippet
 import manager.bucket.BucketAPI
+import manager.common.rest.exception.BadReqException
 import manager.common.rest.exception.NotFoundException
 import manager.manager.integration.permission.SnippetPerm
 import manager.manager.model.dto.*
@@ -83,15 +84,21 @@ class ManagerService
             snippetId: String,
         ) {
             if (userIsNotTheOwner(snippetId, userId, token)) {
-                this.snippetRepository.deleteById(snippetId.toLong())
+                throw BadReqException("The user has no permissions for updating the snippet")
             }
+            this.snippetRepository.deleteById(snippetId.toLong())
             bucketAPI.deleteSnippet(snippetId)
         }
 
         override fun updateSnippet(
             snippetId: String,
             input: UpdateSnippet,
+            userId: String,
+            token: String,
         ): SnippetDto {
+            if (userIsNotTheOwner(snippetId, userId, token)) {
+                throw BadReqException("The user has no permissions for updating the snippet")
+            }
             val snippet = this.snippetRepository.findById(snippetId.toLong())
             if (snippet.isEmpty) throw NotFoundException("Snippet was not found")
             bucketAPI.deleteSnippet(snippetId)
