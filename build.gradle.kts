@@ -49,6 +49,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
     implementation("org.austral.ingsis:redis-streams-mvc:0.1.13")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
+    implementation("com.google.code.gson:gson:2.8.8")
+
 //    implementation("PrintScript:utils:1.1.0-SNAPSHOT")
 }
 

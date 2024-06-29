@@ -20,7 +20,8 @@ class RunnerController
         override fun formatSnippet(
             jwt: Jwt,
             snippetBody: SnippetFormatBody,
-        ): Output {
-            return runnerService.formatSnippet(snippetBody, getUserId(jwt.subject), jwt.tokenValue)
+        ): String {
+            val output = runnerService.formatSnippet(snippetBody, getUserId(jwt.subject), jwt.tokenValue)
+            return output
         }
     }

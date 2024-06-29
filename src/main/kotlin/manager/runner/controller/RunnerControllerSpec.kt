@@ -18,5 +18,5 @@ interface RunnerControllerSpec {
     fun formatSnippet(
         @AuthenticationPrincipal jwt: Jwt,
         @RequestBody snippetBody: SnippetFormatBody,
-    ): Output
+    ): String
 }

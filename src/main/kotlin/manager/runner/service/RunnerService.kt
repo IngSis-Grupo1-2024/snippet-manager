@@ -1,7 +1,9 @@
 package manager.runner.service
 
 import manager.bucket.BucketAPI
+import manager.common.rest.ResponseOutput
 import manager.common.rest.dto.Output
+import manager.common.rest.exception.ErrorOutput
 import manager.manager.repository.SnippetRepository
 import manager.rules.integration.configuration.SnippetConf
 import manager.runner.manager.Runner
@@ -29,7 +31,7 @@ class RunnerService
             snippetBody: SnippetFormatBody,
             userId: String,
             token: String,
-        ): Output {
+        ): String {
             // logic for checking permissions
             // TODO: bring config to have the corresponding version & input
 
@@ -40,10 +42,9 @@ class RunnerService
 
             val snippetInfo = FormatInput(snippetContent, snippet.get().language, "v1", rules, listOf("hi"))
             val response = runnerManager.formatSnippet(snippetInfo)
-//        if (response == null) {
-//            return ErrorOutput(response.error[0])
-//        }
-//        return ResponseOutput(response.output[0])
-            return response
+            if (response.output == null) {
+                return ErrorOutput(response.error[0]).message
+            }
+            return ResponseOutput(response.output[0]).message
         }
     }

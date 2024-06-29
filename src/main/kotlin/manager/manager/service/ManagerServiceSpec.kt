@@ -1,12 +1,12 @@
 package manager.manager.service
 
+import manager.manager.model.input.CreateSnippet
 import com.example.snippetmanager.snippet.UpdateSnippet
 import manager.manager.model.dto.FileTypeDto
 import manager.manager.model.dto.SnippetDto
 import manager.manager.model.dto.SnippetListDto
 import manager.manager.model.dto.UsersDto
 import manager.manager.model.enums.ComplianceSnippet
-import manager.manager.model.input.CreateSnippet
 import manager.manager.model.input.ShareSnippetInput
 
 interface ManagerServiceSpec {

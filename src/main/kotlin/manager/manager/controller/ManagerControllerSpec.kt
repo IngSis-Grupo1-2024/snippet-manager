@@ -10,7 +10,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.web.bind.annotation.*
 
-@RequestMapping("/")
+@RequestMapping
 interface ManagerControllerSpec {
     @PostMapping("/userName")
     fun saveName(
@@ -38,7 +38,7 @@ interface ManagerControllerSpec {
     @PutMapping("{snippetId}")
     fun updateSnippet(
         @PathVariable snippetId: String,
-        @RequestBody snippetContent: String,
+        @RequestBody snippetContent: UpdateSnippet,
         @AuthenticationPrincipal jwt: Jwt,
     ): ResponseEntity<Output>
 
