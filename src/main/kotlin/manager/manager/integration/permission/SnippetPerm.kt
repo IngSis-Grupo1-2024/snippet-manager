@@ -9,7 +9,6 @@ interface SnippetPerm {
         token: String,
     )
 
-//    fun isAllowed(permissionType: PermissionType, snippetId: Int, userId: String): ResponseEntity<Boolean>
     fun getPermissionType(
         snippetId: String,
         userId: String,
