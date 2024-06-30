@@ -6,8 +6,7 @@ import manager.runner.service.RunnerService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.web.bind.annotation.RestController
-import snippet.SnippetFormatBody
-import snippet.SnippetInfo
+import manager.snippet.SnippetInfo
 
 @RestController
 class RunnerController
@@ -19,9 +18,9 @@ class RunnerController
 
         override fun formatSnippet(
             jwt: Jwt,
-            snippetBody: SnippetFormatBody,
+            snippetId: String
         ): String {
-            val output = runnerService.formatSnippet(snippetBody, getUserId(jwt.subject), jwt.tokenValue)
+            val output = runnerService.formatSnippet(snippetId, jwt.subject, jwt.tokenValue)
             return output
         }
     }

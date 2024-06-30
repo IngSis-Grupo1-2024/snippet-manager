@@ -1,17 +1,18 @@
 package manager.runner.service
 
-import manager.bucket.BucketAPI
+import manager.common.bucket.BucketAPI
 import manager.common.rest.ResponseOutput
 import manager.common.rest.dto.Output
 import manager.common.rest.exception.ErrorOutput
+import manager.manager.integration.permission.SnippetPerm
+import manager.manager.model.enums.PermissionType
 import manager.manager.repository.SnippetRepository
 import manager.rules.integration.configuration.SnippetConf
 import manager.runner.manager.Runner
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import snippet.FormatInput
-import snippet.SnippetFormatBody
-import snippet.SnippetInfo
+import manager.snippet.FormatInput
+import manager.snippet.SnippetInfo
 
 @Service
 class RunnerService
@@ -21,28 +22,33 @@ class RunnerService
         private val bucketAPI: BucketAPI,
         private val snippetRepository: SnippetRepository,
         private val snippetConf: SnippetConf,
+        private val snippetPermImpl: SnippetPerm,
     ) {
         fun runSnippet(snippet: SnippetInfo): Output {
-            // logic for checking permissions
             return runnerManager.runSnippet(snippet)
         }
 
         fun formatSnippet(
-            snippetBody: SnippetFormatBody,
+            snippetId: String,
             userId: String,
             token: String,
         ): String {
-            // logic for checking permissions
-            // TODO: bring config to have the corresponding version & input
+            /* Logic for checking permissions */
+            val permission = snippetPermImpl.getPermissionType(snippetId, userId, token)
+            if (permission != PermissionType.OWNER) {
+                return "You don't have permission to format this snippet"
+            }
+            /* Bring Snippet and content from Bucket and DB */
+            val snippetContent = bucketAPI.getSnippet(snippetId)
+            val snippet = snippetRepository.findById(snippetId.toLong())
 
-            val snippetContent = bucketAPI.getSnippet(snippetBody.id.toString())
-            val snippet = snippetRepository.findById(snippetBody.id.toLong())
-
+            /* Bring rules, version and input */
             val rules = snippetConf.getRules(userId, token, "FORMATTING").rules
+            val version = snippetConf.getVersion(token, snippet.get().language.toString())
 
-            val snippetInfo = FormatInput(snippetContent, snippet.get().language, "v1", rules, listOf("hi"))
-            val response = runnerManager.formatSnippet(snippetInfo)
-            if (response.output == null) {
+            val snippetInfo = FormatInput(snippetContent, snippet.get().language, version, rules, listOf("hi"))
+            val response = runnerManager.formatSnippet(token, snippetInfo)
+            if (response.error.size > 0) {
                 return ErrorOutput(response.error[0]).message
             }
             return ResponseOutput(response.output[0]).message

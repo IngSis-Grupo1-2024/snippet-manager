@@ -1,7 +1,7 @@
 package manager.manager.service
 
 import com.example.snippetmanager.snippet.UpdateSnippet
-import manager.bucket.BucketAPI
+import manager.common.bucket.BucketAPI
 import manager.common.rest.exception.BadReqException
 import manager.common.rest.exception.NotFoundException
 import manager.manager.integration.permission.SnippetPerm

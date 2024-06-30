@@ -1,6 +1,5 @@
 package manager.common.bucket
 
-import manager.bucket.BucketAPI
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus

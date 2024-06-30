@@ -1,7 +1,8 @@
 package manager.rules.integration.configuration
 
 import com.example.demo.testCase.model.dto.TestCaseDto
-import com.google.gson.Gson
+import com.nimbusds.jose.shaded.gson.Gson
+import com.nimbusds.jose.shaded.gson.JsonArray
 import manager.common.rest.BasicRest
 import manager.manager.rules.model.input.ConfigInput.Companion.getJson
 import manager.rules.model.dto.RulesOutput
@@ -104,4 +105,11 @@ class SnippetConfImpl(
         userId: String,
         language: String,
     ) = getJson(userId, "1.0.0", language).toString()
+
+    override fun getVersion(token: String, language: String): String {
+        val headers = BasicRest.getAuthHeaders(token)
+        val entity = HttpEntity<String>(headers)
+        val response = restTemplate.exchange("$snippetConfUrl/configuration/get_version/$language", HttpMethod.GET, entity, String::class.java)
+        return response.body!!
+    }
 }
