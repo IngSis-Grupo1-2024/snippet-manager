@@ -23,6 +23,10 @@ spring:
           issuer-uri: ${AUTH_SERVER_URI:https://dev-dxazwu1rijz501rx.us.auth0.com/}
           client-id: ${AUTH_CLIENT_ID:client_id}
           client-secret: ${AUTH_CLIENT_SECRET:client_secret}
+  data:
+    redis:
+      host: ${REDIS_HOST:redis}
+      port: ${REDIS_PORT:6379}
 auth0:
   audience: ${AUTH0_AUDIENCE:https://dev-dxazwu1rijz501rx.us.auth0.com/}
 

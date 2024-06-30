@@ -1,5 +1,7 @@
 package manager.manager.service
 
+import com.example.redisevents.LintRequest
+import com.example.redisevents.LintRulesInput
 import com.example.snippetmanager.snippet.UpdateSnippet
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -18,8 +20,6 @@ import manager.manager.model.input.ShareSnippetInput
 import manager.manager.repository.SnippetRepository
 import manager.manager.repository.SnippetStatusRepository
 import manager.manager.repository.UserRepository
-import manager.redis.events.LintRequest
-import manager.redis.events.LintRulesInput
 import manager.rules.integration.configuration.SnippetConf
 import manager.rules.model.dto.RulesOutput
 import org.springframework.beans.factory.annotation.Autowired
@@ -242,7 +242,7 @@ constructor(
         val rules: List<LintRulesInput> = rulesParser(this.config.getRules(userId, token, "LINTING"))
         val snippet: Snippet = this.snippetRepository.findById(snippetId.toLong()).get()
         val snippetContent: String = bucketAPI.getSnippet(snippetId)
-        val event = LintRequest(snippetContent, snippet.language.toString(), "v1", rules, listOf(), snippetId, userId)
+        val event = LintRequest(snippetContent, snippet.language.toString(), "v1", rules, listOf("Hello"), snippetId, userId)
         GlobalScope.launch {
             lintProducer.publishEvent(event)
         }

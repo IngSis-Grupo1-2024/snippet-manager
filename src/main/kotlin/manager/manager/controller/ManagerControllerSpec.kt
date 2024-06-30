@@ -38,7 +38,7 @@ interface ManagerControllerSpec {
     @PutMapping("{snippetId}")
     fun updateSnippet(
         @PathVariable snippetId: String,
-        @RequestBody snippetContent: UpdateSnippet,
+        @RequestBody snippetContent: String,
         @AuthenticationPrincipal jwt: Jwt,
     ): ResponseEntity<Output>
 

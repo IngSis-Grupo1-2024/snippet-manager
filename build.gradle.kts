@@ -26,6 +26,15 @@ repositories {
             password = project.findProperty("gpr.key") as String? ?: System.getenv("GITHUB_TOKEN") as String
         }
     }
+
+    maven {
+        name = "GitHubPackagesRedisEvents"
+        url = uri("https://maven.pkg.github.com/IngSis-Grupo1-2024/redis-events")
+        credentials {
+            username = project.findProperty("gpr.user") as String? ?: System.getenv("GITHUB_ACTOR")
+            password = project.findProperty("gpr.key") as String? ?: System.getenv("GITHUB_TOKEN")
+        }
+    }
 }
 
 dependencies {
@@ -50,6 +59,7 @@ dependencies {
     implementation("org.austral.ingsis:redis-streams-mvc:0.1.13")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
     implementation("com.google.code.gson:gson:2.8.8")
+    implementation("org.gradle.redisevents:events:1.1.0-SNAPSHOT")
 
 //    implementation("PrintScript:utils:1.1.0-SNAPSHOT")
 }

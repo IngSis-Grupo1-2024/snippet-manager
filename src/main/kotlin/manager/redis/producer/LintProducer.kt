@@ -1,9 +1,10 @@
 package manager.redis.producer
 
-import manager.redis.events.LintRequest
+import com.example.redisevents.LintRequest
 import org.austral.ingsis.redis.RedisStreamProducer
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.data.redis.core.ReactiveRedisTemplate
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Component
 
