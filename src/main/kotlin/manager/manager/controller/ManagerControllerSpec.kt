@@ -1,6 +1,5 @@
 package manager.manager.controller
 
-import com.example.snippetmanager.snippet.UpdateSnippet
 import manager.common.rest.dto.Output
 import manager.manager.model.dto.FileTypeDto
 import manager.manager.model.input.CreateSnippet
