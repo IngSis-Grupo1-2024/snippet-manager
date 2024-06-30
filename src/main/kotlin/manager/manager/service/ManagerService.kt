@@ -6,6 +6,7 @@ import com.example.snippetmanager.snippet.UpdateSnippet
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import manager.bucket.BucketAPI
+import manager.common.rest.exception.BadReqException
 import manager.common.rest.exception.NotFoundException
 import manager.manager.integration.permission.SnippetPerm
 import manager.manager.model.SnippetStatus
@@ -90,23 +91,24 @@ constructor(
             id = snippet.get().id!!,
             name = snippet.get().name,
             content = content,
-            compliance = ComplianceSnippet.PENDING,
+            compliance = snippet.get().status,
             author = snippet.get().userSnippet.name,
             language = snippet.get().language,
             extension = snippet.get().extension,
         )
     }
 
-    override fun deleteSnippet(
-        userId: String,
-        token: String,
-        snippetId: String,
-    ) {
-        if (userIsNotTheOwner(snippetId, userId, token)) {
+        override fun deleteSnippet(
+            userId: String,
+            token: String,
+            snippetId: String,
+        ) {
+            if (userIsNotTheOwner(snippetId, userId, token)) {
+                throw BadReqException("The user has no permissions for updating the snippet")
+            }
             this.snippetRepository.deleteById(snippetId.toLong())
+            bucketAPI.deleteSnippet(snippetId)
         }
-        bucketAPI.deleteSnippet(snippetId)
-    }
 
     override fun updateSnippet(
         snippetId: String,
@@ -114,6 +116,9 @@ constructor(
         userId: String,
         token: String
     ): SnippetDto {
+        if (userIsNotTheOwner(snippetId, userId, token)) {
+            throw BadReqException("The user has no permissions for updating the snippet")
+        }
         val snippet = this.snippetRepository.findById(snippetId.toLong())
         if (snippet.isEmpty) throw NotFoundException("Snippet was not found")
         bucketAPI.deleteSnippet(snippetId)
