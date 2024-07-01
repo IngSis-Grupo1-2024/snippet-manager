@@ -8,5 +8,8 @@ import manager.snippet.SnippetInfo
 interface Runner {
     fun runSnippet(snippet: SnippetInfo): Output
 
-    fun formatSnippet(token: String, snippet: FormatInput): RunningOutput
+    fun formatSnippet(
+        token: String,
+        snippet: FormatInput,
+    ): RunningOutput
 }

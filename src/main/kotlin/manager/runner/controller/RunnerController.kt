@@ -1,15 +1,13 @@
 package manager.runner.controller
 
-import manager.common.rest.BasicRest.Companion.getUserId
 import manager.common.rest.dto.Output
-import manager.common.rest.exception.NotFoundException
 import manager.runner.service.RunnerService
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.security.oauth2.jwt.Jwt
-import org.springframework.web.bind.annotation.RestController
 import manager.snippet.SnippetInfo
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.oauth2.jwt.Jwt
+import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class RunnerController
@@ -21,7 +19,7 @@ class RunnerController
 
         override fun formatSnippet(
             jwt: Jwt,
-            snippetId: String
+            snippetId: String,
         ): ResponseEntity<String> {
             try {
                 val output = runnerService.formatSnippet(snippetId, jwt.subject, jwt.tokenValue)

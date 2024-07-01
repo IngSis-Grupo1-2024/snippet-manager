@@ -34,7 +34,10 @@ interface SnippetConf {
         type: String,
     ): RulesOutput
 
-    fun getVersion(token: String, language: String): String
+    fun getVersion(
+        token: String,
+        language: String,
+    ): String
 
     fun updateRules(
         updateRulesDTO: UpdateRulesDTO,

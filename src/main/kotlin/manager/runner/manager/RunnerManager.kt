@@ -1,15 +1,15 @@
 package manager.runner.manager
 
 import manager.common.rest.dto.Output
-import org.springframework.http.HttpEntity
-import org.springframework.web.client.RestTemplate
 import manager.snippet.FormatInput
 import manager.snippet.RunningOutput
 import manager.snippet.SnippetInfo
-import org.springframework.http.HttpMethod
 import org.springframework.http.*
+import org.springframework.http.HttpEntity
+import org.springframework.http.HttpMethod
+import org.springframework.web.client.RestTemplate
 
-class RunnerManager(val rest: RestTemplate, private val runnerUrl: String) : Runner{
+class RunnerManager(val rest: RestTemplate, val runnerUrl: String) : Runner {
     override fun runSnippet(snippet: SnippetInfo): Output {
         val url = "$runnerUrl/execute/executeSnippet"
         val response = rest.postForEntity(url, HttpEntity(snippet), Output::class.java)
@@ -21,7 +21,10 @@ class RunnerManager(val rest: RestTemplate, private val runnerUrl: String) : Run
         }
     }
 
-    override fun formatSnippet(token: String, snippet: FormatInput): RunningOutput {
+    override fun formatSnippet(
+        token: String,
+        snippet: FormatInput,
+    ): RunningOutput {
         val url = "$runnerUrl/execute/formatSnippet"
 
         val headers = HttpHeaders()

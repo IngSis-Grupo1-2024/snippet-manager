@@ -4,13 +4,13 @@ import com.example.redisevents.LintRequest
 import com.example.redisevents.LintRulesInput
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import manager.bucket.BucketAPI
+import manager.common.bucket.BucketAPI
 import manager.common.rest.exception.BadReqException
 import manager.common.rest.exception.NotFoundException
 import manager.manager.integration.permission.SnippetPerm
-import manager.manager.model.entity.SnippetStatus
 import manager.manager.model.dto.*
 import manager.manager.model.entity.Snippet
+import manager.manager.model.entity.SnippetStatus
 import manager.manager.model.entity.UserSnippet
 import manager.manager.model.enums.ComplianceSnippet
 import manager.manager.model.enums.FileType
@@ -46,8 +46,9 @@ class ManagerService
             token: String,
         ): SnippetDto {
             val user = userRepository.findByUserId(userId) ?: throw NotFoundException("User name was not found")
-            val status = snippetStatusRepository.findByStatus(ComplianceSnippet.PENDING) ?:
-                    snippetStatusRepository.save(SnippetStatus(ComplianceSnippet.PENDING))
+            val status =
+                snippetStatusRepository.findByStatus(ComplianceSnippet.PENDING)
+                    ?: snippetStatusRepository.save(SnippetStatus(ComplianceSnippet.PENDING))
             val snippet =
                 snippetRepository.save(
                     Snippet(
@@ -231,7 +232,10 @@ class ManagerService
             val user = this.userRepository.findByUserId(userId)
             if (snippet.isEmpty) throw NotFoundException("Snippet was not found")
             if (user == null) throw NotFoundException("User was not found")
-            val status = snippetStatusRepository.findByStatus(complianceSnippet) ?: snippetStatusRepository.save(SnippetStatus(complianceSnippet))
+            val status =
+                snippetStatusRepository.findByStatus(
+                    complianceSnippet,
+                ) ?: snippetStatusRepository.save(SnippetStatus(complianceSnippet))
             snippet.get().status = status
             this.snippetRepository.save(snippet.get())
             return snippet.get().status.status
