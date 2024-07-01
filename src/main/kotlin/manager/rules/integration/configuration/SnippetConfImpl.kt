@@ -25,7 +25,7 @@ class SnippetConfImpl(
         headers.contentType = MediaType.APPLICATION_JSON
 
         val request = HttpEntity<String>(getJsonDefault(userId, language), headers)
-        return restTemplate.postForEntity<String>(url, request)
+        return restTemplate.exchange(url, HttpMethod.POST, request, String::class.java)
     }
 
     override fun getSnippetId(

@@ -13,6 +13,7 @@ class BucketManager(private val urlForBucket: String, private val rest: RestTemp
         snippetId: String,
         bodyContent: String,
     ): String? {
+        println(urlForBucket)
         val fullUrl = "$urlForBucket/$snippetId"
         val headers =
             HttpHeaders().apply {

@@ -17,6 +17,24 @@ java {
 
 repositories {
     mavenCentral()
+
+    maven {
+        name = "GitHubPackagesClassRedisStreams"
+        url = uri("https://maven.pkg.github.com/austral-ingsis/class-redis-streams")
+        credentials {
+            username = project.findProperty("gpr.user") as String? ?: System.getenv("GITHUB_ACTOR")
+            password = project.findProperty("gpr.key") as String? ?: System.getenv("GITHUB_TOKEN")
+        }
+    }
+
+    maven {
+        name = "GitHubPackagesRedisEvents"
+        url = uri("https://maven.pkg.github.com/IngSis-Grupo1-2024/redis-events")
+        credentials {
+            username = project.findProperty("gpr.user") as String? ?: System.getenv("GITHUB_ACTOR")
+            password = project.findProperty("gpr.key") as String? ?: System.getenv("GITHUB_TOKEN")
+        }
+    }
 }
 
 dependencies {
@@ -37,7 +55,11 @@ dependencies {
     annotationProcessor("org.projectlombok:lombok")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    implementation("org.springframework.boot:spring-boot-starter-data-redis")
+    implementation("org.austral.ingsis:redis-streams-mvc:0.1.13")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
     implementation("com.google.code.gson:gson:2.8.8")
+    implementation("org.gradle.redisevents:events:1.1.0-SNAPSHOT")
 
 //    implementation("PrintScript:utils:1.1.0-SNAPSHOT")
 }

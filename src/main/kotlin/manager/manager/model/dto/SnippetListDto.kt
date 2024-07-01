@@ -14,4 +14,8 @@ class SnippetListDto(
             SnippetListDto(this.snippets.plus(snippetListDto.snippets))
         }
     }
+
+    operator fun iterator(): Iterator<SnippetDto> {
+        return snippets.iterator()
+    }
 }

@@ -1,10 +1,10 @@
 package manager.manager.service
 
-import com.example.snippetmanager.snippet.UpdateSnippet
 import manager.manager.model.dto.FileTypeDto
 import manager.manager.model.dto.SnippetDto
 import manager.manager.model.dto.SnippetListDto
 import manager.manager.model.dto.UsersDto
+import manager.manager.model.enums.ComplianceSnippet
 import manager.manager.model.input.CreateSnippet
 import manager.manager.model.input.ShareSnippetInput
 
@@ -25,7 +25,7 @@ interface ManagerServiceSpec {
 
     fun updateSnippet(
         snippetId: String,
-        input: UpdateSnippet,
+        input: String,
         userId: String,
         token: String,
     ): SnippetDto
@@ -49,4 +49,10 @@ interface ManagerServiceSpec {
         shareSnippet: ShareSnippetInput,
         token: String,
     ): SnippetDto
+
+    fun updateSnippetStatus(
+        userId: String,
+        snippetId: String,
+        complianceSnippet: ComplianceSnippet,
+    ): ComplianceSnippet
 }
