@@ -8,9 +8,11 @@ import manager.manager.model.dto.*
 import manager.manager.model.input.CreateSnippet
 import manager.manager.model.input.ShareSnippetInput
 import manager.manager.service.ManagerServiceSpec
+import org.apache.coyote.BadRequestException
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatusCode
 import org.springframework.http.ResponseEntity
 import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.web.bind.annotation.RestController
@@ -38,22 +40,23 @@ class ManagerController
             snippetContent: CreateSnippet,
         ): ResponseEntity<Output> {
             try {
-                logger.info("Creating snippet manager")
+                logger.info("Creating snippet")
                 val responseBody = service.createSnippet(snippetContent, getUserId(jwt.subject), jwt.tokenValue)
                 return ResponseEntity.status(HttpStatus.CREATED).body(responseBody)
             } catch (e: HttpClientErrorException) {
-                return ResponseEntity.status(e.statusCode).body(ErrorOutput(e.message!!))
+                return getErrorOutputResponse(e.statusCode, e.message!!)
             } catch (e: NotFoundException) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorOutput(e.message!!))
+                return getErrorOutputResponse(HttpStatus.NOT_FOUND, e.message!!)
             }
         }
 
         override fun getSnippet(snippetId: String): ResponseEntity<Output> {
             try {
+                logger.info("Getting snippet")
                 val responseBody = service.getSnippet(snippetId)
                 return ResponseEntity.ok(responseBody)
             } catch (e: HttpClientErrorException) {
-                return ResponseEntity.status(e.statusCode).body(ErrorOutput(e.message!!))
+                return getErrorOutputResponse(e.statusCode, e.message!!)
             }
         }
 
@@ -62,10 +65,11 @@ class ManagerController
             snippetId: String,
         ): ResponseEntity<String> {
             try {
+                logger.info("Deleting snippet")
                 service.deleteSnippet(getUserId(jwt.subject), jwt.tokenValue, snippetId)
                 return ResponseEntity.ok("Snippet $snippetId deleted")
             } catch (e: HttpClientErrorException) {
-                return ResponseEntity.status(e.statusCode).body(e.message)
+                return getErrorStrResponse(e.statusCode, e.message!!)
             }
         }
 
@@ -75,31 +79,37 @@ class ManagerController
             jwt: Jwt,
         ): ResponseEntity<Output> {
             try {
+                logger.info("Updating snippet")
                 val responseBody: SnippetDto = service.updateSnippet(snippetId, snippetContent, getUserId(jwt.subject), jwt.tokenValue)
                 return ResponseEntity.ok(responseBody)
             } catch (e: HttpClientErrorException) {
-                return ResponseEntity.status(e.statusCode).body(ErrorOutput(e.message!!))
+                return getErrorOutputResponse(e.statusCode, e.message!!)
             } catch (e: NotFoundException) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorOutput(e.message!!))
+                return getErrorOutputResponse(HttpStatus.NOT_FOUND, e.message!!)
+            } catch (e: BadRequestException) {
+                return getErrorOutputResponse(HttpStatus.BAD_REQUEST, e.message!!)
             }
         }
 
         override fun getFileTypes(): ResponseEntity<List<FileTypeDto>> {
+            logger.info("Getting file types")
             return ResponseEntity.status(HttpStatus.OK).body(this.service.getFileTypes())
         }
 
         override fun getSnippetDescriptors(jwt: Jwt): ResponseEntity<Output> {
             try {
+                logger.info("Getting snippet from user ${jwt.subject}")
                 val responseBody: SnippetListDto = service.getSnippetDescriptors(getUserId(jwt.subject), jwt.tokenValue)
                 return ResponseEntity.ok(responseBody)
             } catch (e: HttpClientErrorException) {
-                return ResponseEntity.status(e.statusCode).body(ErrorOutput(e.message!!))
+                return getErrorOutputResponse(e.statusCode, e.message!!)
             } catch (e: NotFoundException) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorOutput(e.message!!))
+                return getErrorOutputResponse(HttpStatus.NOT_FOUND, e.message!!)
             }
         }
 
         override fun getUserFriends(jwt: Jwt): ResponseEntity<Output> {
+            logger.info("Getting snippet searcher users")
             val responseBody: UsersDto = service.getUserFriends(getUserId(jwt.subject))
             return ResponseEntity.ok(responseBody)
         }
@@ -108,7 +118,28 @@ class ManagerController
             jwt: Jwt,
             shareSnippet: ShareSnippetInput,
         ): ResponseEntity<Output> {
-            val responseBody = service.shareSnippet(getUserId(jwt.subject), shareSnippet, jwt.tokenValue)
-            return ResponseEntity.ok(responseBody)
+            try {
+                logger.info("Sharing snippet from user ${jwt.subject} to ${shareSnippet.userId} for the snippet ${shareSnippet.snippetId}")
+                val responseBody = service.shareSnippet(getUserId(jwt.subject), shareSnippet, jwt.tokenValue)
+                return ResponseEntity.ok(responseBody)
+            } catch (e: BadRequestException) {
+                return getErrorOutputResponse(HttpStatus.BAD_REQUEST, e.message!!)
+            }
+        }
+
+        private fun getErrorStrResponse(
+            statusCode: HttpStatusCode,
+            message: String,
+        ): ResponseEntity<String> {
+            logger.warn(message)
+            return ResponseEntity.status(statusCode).body(message)
+        }
+
+        private fun getErrorOutputResponse(
+            status: HttpStatusCode,
+            message: String,
+        ): ResponseEntity<Output> {
+            logger.warn(message)
+            return ResponseEntity.status(status).body(ErrorOutput(message))
         }
     }

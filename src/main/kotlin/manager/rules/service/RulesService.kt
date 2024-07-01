@@ -1,12 +1,11 @@
 package manager.rules.service
 
-import com.example.redisevents.LintRequest
-import com.example.redisevents.LintRulesInput
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import manager.manager.model.dto.SnippetListDto
+import manager.bucket.BucketAPI
+import manager.common.rest.exception.NotFoundException
 import manager.manager.model.enums.SnippetLanguage
-import manager.manager.service.ManagerService
+import manager.manager.repository.UserRepository
 import manager.redis.producer.LintProducer
 import manager.rules.dto.RulesDTO
 import manager.rules.integration.configuration.SnippetConf
@@ -21,8 +20,9 @@ class RulesService
     @Autowired
     constructor(
         private val snippetConf: SnippetConf,
-        private val snippetManagerService: ManagerService,
         private val lintProducer: LintProducer,
+        private val userRepository: UserRepository,
+        private val bucketAPI: BucketAPI,
     ) {
         fun createDefaultConf(
             userId: String,
@@ -41,19 +41,15 @@ class RulesService
         ) {
             snippetConf.updateRules(updateRulesDTO, userId, tokenValue)
             if (updateRulesDTO.type == "LINTING") {
-                val snippets: SnippetListDto = snippetManagerService.getSnippetDescriptors(userId, tokenValue)
-                for (snippet in snippets) {
+                val user = userRepository.findByUserId(userId) ?: throw NotFoundException("There is no user with id $userId")
+                user.snippet.forEach { snippet ->
                     GlobalScope.launch {
+                        val content = bucketAPI.getSnippet(snippet.id.toString())
                         lintProducer.publishEvent(
-                            LintRequest(
-                                snippet.content,
-                                snippet.language.name,
-                                "v1",
-                                rulesParser(getLintingRules(userId, tokenValue)),
-                                listOf("hello"),
-                                snippet.id.toString(),
-                                userId,
-                            ),
+                            content,
+                            snippet,
+                            getLintingRules(userId, tokenValue),
+                            "v1",
                         )
                     }
                 }
@@ -83,18 +79,5 @@ class RulesService
             tokenValue: String,
         ): RulesOutput {
             return snippetConf.getRules(userId, tokenValue, "FORMATTING")
-        }
-
-        private fun rulesParser(rulesOutput: RulesOutput): List<LintRulesInput> {
-            return rulesOutput.rules.map { rule ->
-                LintRulesInput(
-                    rule.parent,
-                    rule.isActive,
-                    rule.name == "expression",
-                    rule.name == "identifier",
-                    rule.name == "literal",
-                    if (rule.name == "snake_case" || rule.name == "") "snake case" else "camel case",
-                )
-            }
         }
     }

@@ -25,7 +25,7 @@ interface ManagerServiceSpec {
 
     fun updateSnippet(
         snippetId: String,
-        input: String,
+        newContent: String,
         userId: String,
         token: String,
     ): SnippetDto

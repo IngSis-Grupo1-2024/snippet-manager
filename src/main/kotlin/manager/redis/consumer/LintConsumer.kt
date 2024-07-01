@@ -2,9 +2,11 @@ package manager.redis.consumer
 
 import com.example.redisevents.LintResult
 import com.example.redisevents.LintResultStatus
+import manager.manager.controller.ManagerController
 import manager.manager.model.enums.ComplianceSnippet
 import manager.manager.service.ManagerServiceSpec
 import org.austral.ingsis.redis.RedisStreamConsumer
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Profile
@@ -27,14 +29,18 @@ class LintConsumer
             subscription()
         }
 
+        private val logger = LoggerFactory.getLogger(ManagerController::class.java)
+
         override fun onMessage(record: ObjectRecord<String, LintResult>) {
             println("Received record: with user: ${record.value.userId} and snippetId: ${record.value.snippetId}")
+            logger.info("Received record: with user: ${record.value.userId} and snippetId: ${record.value.snippetId}")
 
             val payload = record.value
             val newStatus = statusParser(payload.result)
 
             managerService.updateSnippetStatus(payload.userId, payload.snippetId, newStatus)
 
+            logger.info("Received record: with user: ${record.value.userId} and snippetId: ${record.value.snippetId}")
             println("Processed record: with user: ${record.value.userId} and snippetId: ${record.value.snippetId}. New status: $newStatus")
         }
 
