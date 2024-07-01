@@ -1,9 +1,8 @@
 package manager.runner.service
 
 import manager.common.bucket.BucketAPI
-import manager.common.rest.ResponseOutput
 import manager.common.rest.dto.Output
-import manager.common.rest.exception.ErrorOutput
+import manager.common.rest.exception.NotFoundException
 import manager.manager.integration.permission.SnippetPerm
 import manager.manager.model.enums.PermissionType
 import manager.manager.repository.SnippetRepository
@@ -49,8 +48,12 @@ class RunnerService
             val snippetInfo = FormatInput(snippetContent, snippet.get().language, version, rules, listOf("hi"))
             val response = runnerManager.formatSnippet(token, snippetInfo)
             if (response.error.size > 0) {
-                return ErrorOutput(response.error[0]).message
+                throw NotFoundException("Error occurred: ${response.error.joinToString()}")
             }
-            return ResponseOutput(response.output[0]).message
+            val stringResponse = response.output.joinToString()
+
+            bucketAPI.deleteSnippet(snippetId)
+            bucketAPI.createSnippet(snippetId, stringResponse)
+            return stringResponse
         }
     }
