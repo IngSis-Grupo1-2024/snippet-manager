@@ -1,4 +1,4 @@
-package snippet
+package manager.snippet
 
 data class SnippetFormatBody(
     val id: Int,

@@ -1,11 +1,11 @@
 package manager.runner.controller
 
 import manager.common.rest.dto.Output
+import manager.snippet.SnippetInfo
+import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.web.bind.annotation.*
-import snippet.SnippetFormatBody
-import snippet.SnippetInfo
 
 @RequestMapping("/run")
 interface RunnerControllerSpec {
@@ -14,9 +14,9 @@ interface RunnerControllerSpec {
         @RequestBody content: SnippetInfo,
     ): Output
 
-    @PostMapping("/format")
+    @PostMapping("/format/{snippetId}")
     fun formatSnippet(
         @AuthenticationPrincipal jwt: Jwt,
-        @RequestBody snippetBody: SnippetFormatBody,
-    ): String
+        @PathVariable snippetId: String,
+    ): ResponseEntity<String>
 }

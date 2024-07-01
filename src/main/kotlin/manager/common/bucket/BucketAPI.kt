@@ -1,4 +1,4 @@
-package manager.bucket
+package manager.common.bucket
 
 interface BucketAPI {
     fun createSnippet(
