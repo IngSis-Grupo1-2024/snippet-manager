@@ -24,8 +24,23 @@ class RunnerService
         private val snippetConf: SnippetConf,
         private val snippetPermImpl: SnippetPerm,
     ) {
-        fun runSnippet(snippet: SnippetInfo): Output {
-            return runnerManager.runSnippet(snippet)
+        fun runSnippet(token: String, snippetId: String): String {
+            val content = fetchSnippetContent(snippetId)
+            val snippet = snippetRepository.findById(snippetId.toLong())
+
+            val version = fetchSnippetVersion(token, snippet.get().language.toString())
+            val snippetInfo = SnippetInfo(snippet.get().name,
+                                            content,
+                                            snippet.get().language,
+                                            version,
+                                            snippet.get().extension,
+                                            listOf("hi"))
+
+            val response = runnerManager.runSnippet(token, snippetInfo)
+            if (response.error.isNotEmpty()) {
+                throw Exception(response.error.joinToString("\n"))
+            }
+            return response.output.joinToString("\n")
         }
 
         fun formatSnippet(

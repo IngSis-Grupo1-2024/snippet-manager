@@ -13,8 +13,13 @@ import org.springframework.web.bind.annotation.RestController
 class RunnerController
     @Autowired
     constructor(private val runnerService: RunnerService) : RunnerControllerSpec {
-        override fun runSnippet(content: SnippetInfo): Output {
-            return runnerService.runSnippet(content)
+        override fun runSnippet(jwt: Jwt, snippetId: String): ResponseEntity<String> {
+            try {
+                val output = runnerService.runSnippet(jwt.tokenValue, snippetId)
+                return ResponseEntity(output, HttpStatus.OK)
+            } catch (e: Exception) {
+                return ResponseEntity(e.message!!, HttpStatus.INTERNAL_SERVER_ERROR)
+            }
         }
 
         override fun formatSnippet(

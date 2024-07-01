@@ -1,5 +1,6 @@
 package manager.runner.manager
 
+import manager.common.rest.BasicRest
 import manager.common.rest.dto.Output
 import manager.snippet.FormatInput
 import manager.snippet.RunningOutput
@@ -10,9 +11,13 @@ import org.springframework.http.HttpMethod
 import org.springframework.web.client.RestTemplate
 
 class RunnerManager(val rest: RestTemplate, val runnerUrl: String) : Runner {
-    override fun runSnippet(snippet: SnippetInfo): Output {
+    override fun runSnippet(token: String, snippet: SnippetInfo): RunningOutput {
         val url = "$runnerUrl/execute/executeSnippet"
-        val response = rest.postForEntity(url, HttpEntity(snippet), Output::class.java)
+
+        val headers = BasicRest.getAuthHeaders(token)
+        headers.contentType = MediaType.APPLICATION_JSON
+
+        val response = rest.postForEntity(url, HttpEntity(snippet, headers), RunningOutput::class.java)
 
         if (response.statusCode.is2xxSuccessful) {
             return response.body!!

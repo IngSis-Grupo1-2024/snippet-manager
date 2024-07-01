@@ -9,10 +9,11 @@ import org.springframework.web.bind.annotation.*
 
 @RequestMapping("/run")
 interface RunnerControllerSpec {
-    @PostMapping("/execute")
+    @PostMapping("/execute/{snippetId}")
     fun runSnippet(
-        @RequestBody content: SnippetInfo,
-    ): Output
+        @AuthenticationPrincipal jwt: Jwt,
+        @PathVariable snippetId: String,
+    ): ResponseEntity<String>
 
     @PostMapping("/format/{snippetId}")
     fun formatSnippet(

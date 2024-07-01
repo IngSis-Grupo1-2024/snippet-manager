@@ -6,7 +6,7 @@ import manager.snippet.RunningOutput
 import manager.snippet.SnippetInfo
 
 interface Runner {
-    fun runSnippet(snippet: SnippetInfo): Output
+    fun runSnippet(token: String, snippet: SnippetInfo): RunningOutput
 
     fun formatSnippet(
         token: String,
