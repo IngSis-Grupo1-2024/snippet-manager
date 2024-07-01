@@ -8,7 +8,7 @@ import manager.bucket.BucketAPI
 import manager.common.rest.exception.BadReqException
 import manager.common.rest.exception.NotFoundException
 import manager.manager.integration.permission.SnippetPerm
-import manager.manager.model.SnippetStatus
+import manager.manager.model.entity.SnippetStatus
 import manager.manager.model.dto.*
 import manager.manager.model.entity.Snippet
 import manager.manager.model.entity.UserSnippet
