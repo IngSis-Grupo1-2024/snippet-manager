@@ -7,6 +7,7 @@ import manager.manager.model.enums.ComplianceSnippet
 @Entity
 data class SnippetStatus(
     @Enumerated(EnumType.STRING)
+    @Column(unique = true)
     var status: ComplianceSnippet,
     @OneToMany(mappedBy = "status_id")
     val snippet: List<Snippet> = ArrayList(),

@@ -18,7 +18,7 @@ data class Snippet(
     var userSnippet: UserSnippet,
     @ManyToOne
     @JoinColumn(name = "status_id", nullable = false)
-    val status: SnippetStatus,
+    var status: SnippetStatus,
 ) : CommonEntity() {
     constructor() : this("", SnippetLanguage.PRINTSCRIPT, "", UserSnippet("", ""), SnippetStatus())
 }

@@ -46,6 +46,8 @@ class ManagerService
             token: String,
         ): SnippetDto {
             val user = userRepository.findByUserId(userId) ?: throw NotFoundException("User name was not found")
+            val status = snippetStatusRepository.findByStatus(ComplianceSnippet.PENDING) ?:
+                    snippetStatusRepository.save(SnippetStatus(ComplianceSnippet.PENDING))
             val snippet =
                 snippetRepository.save(
                     Snippet(
@@ -53,7 +55,7 @@ class ManagerService
                         input.language,
                         input.extension,
                         user,
-                        ComplianceSnippet.PENDING,
+                        status,
                     ),
                 )
             bucketAPI.createSnippet(snippet.id.toString(), input.content)
@@ -91,7 +93,7 @@ class ManagerService
                 id = snippet.get().id!!,
                 name = snippet.get().name,
                 content = content,
-                compliance = snippet.get().status,
+                compliance = snippet.get().status.status,
                 author = snippet.get().userSnippet.name,
                 language = snippet.get().language,
                 extension = snippet.get().extension,
@@ -229,9 +231,10 @@ class ManagerService
             val user = this.userRepository.findByUserId(userId)
             if (snippet.isEmpty) throw NotFoundException("Snippet was not found")
             if (user == null) throw NotFoundException("User was not found")
-            val snippetCompliance: SnippetStatus =
-                this.snippetStatusRepository.save(SnippetStatus(complianceSnippet, snippet.get()))
-            return snippetCompliance.status
+            val status = snippetStatusRepository.findByStatus(complianceSnippet) ?: snippetStatusRepository.save(SnippetStatus(complianceSnippet))
+            snippet.get().status = status
+            this.snippetRepository.save(snippet.get())
+            return snippet.get().status.status
         }
 
         private fun userIsNotTheOwner(
