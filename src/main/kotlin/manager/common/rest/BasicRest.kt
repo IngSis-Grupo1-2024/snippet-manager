@@ -1,6 +1,6 @@
 package manager.common.rest
 
-import modules.common.logs.CorrelationIdFilter.Companion.CORRELATION_ID_KEY
+import manager.logs.CorrelationIdFilter.Companion.CORRELATION_ID_KEY
 import org.slf4j.MDC
 import org.springframework.http.HttpHeaders
 
