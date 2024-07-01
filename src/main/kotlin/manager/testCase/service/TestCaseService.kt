@@ -5,8 +5,10 @@ import manager.common.rest.exception.BadReqException
 import manager.manager.integration.permission.SnippetPerm
 import manager.manager.model.enums.PermissionType
 import manager.manager.repository.SnippetRepository
+import manager.rules.controller.RulesController
 import manager.rules.integration.configuration.SnippetConf
 import manager.testCase.model.input.TestCaseInput
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -18,6 +20,7 @@ class TestCaseService
         private val snippetPerm: SnippetPerm,
         private val snippetRepo: SnippetRepository,
     ) {
+    private val logger = LoggerFactory.getLogger(RulesController::class.java)
         fun postTestCase(
             userId: String,
             token: String,
@@ -31,6 +34,7 @@ class TestCaseService
                         "for creation or update of the test",
                 )
             }
+            logger.info("Calling snippet configuration to post the test case ${testCaseInput.name}")
             return snippetConf.postTestCase(token, testCaseInput)
         }
 
@@ -46,7 +50,7 @@ class TestCaseService
                         "for deleting the test",
                 )
             }
-
+            logger.info("Calling snippet configuration to delete the test case $testCaseId")
             snippetConf.deleteTestCase(token, testCaseId)
         }
 

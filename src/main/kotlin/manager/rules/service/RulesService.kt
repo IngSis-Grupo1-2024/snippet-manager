@@ -7,10 +7,12 @@ import manager.common.rest.exception.NotFoundException
 import manager.manager.model.enums.SnippetLanguage
 import manager.manager.repository.UserRepository
 import manager.redis.producer.LintProducer
+import manager.rules.controller.RulesController
 import manager.rules.dto.RulesDTO
 import manager.rules.integration.configuration.SnippetConf
 import manager.rules.model.dto.RulesOutput
 import manager.rules.model.dto.UpdateRulesDTO
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
@@ -24,6 +26,7 @@ class RulesService
         private val userRepository: UserRepository,
         private val bucketAPI: BucketAPI,
     ) {
+        private val logger = LoggerFactory.getLogger(RulesController::class.java)
         fun createDefaultConf(
             userId: String,
             token: String,
@@ -44,6 +47,7 @@ class RulesService
                 val user = userRepository.findByUserId(userId) ?: throw NotFoundException("There is no user with id $userId")
                 user.snippet.forEach { snippet ->
                     GlobalScope.launch {
+                        logger.info("Getting content from bucket of snippet id ${snippet.id}")
                         val content = bucketAPI.getSnippet(snippet.id.toString())
                         lintProducer.publishEvent(
                             content,
