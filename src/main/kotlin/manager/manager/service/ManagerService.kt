@@ -58,6 +58,19 @@ class ManagerService
                         status,
                     ),
                 )
+            GlobalScope.launch {
+                lintProducer.publishEvent(
+                    LintRequest(
+                        input.content,
+                        input.language.name,
+                        "v1",
+                        rulesParser(config.getRules(userId, token, "LINTING")),
+                        listOf("Hello"),
+                        snippet.id.toString(),
+                        userId
+                    )
+                )
+            }
             bucketAPI.createSnippet(snippet.id.toString(), input.content)
             addOwnerPermission(userId, snippet.id!!, token)
             return SnippetDto(
@@ -130,7 +143,7 @@ class ManagerService
                 id = snippet.get().id!!,
                 name = snippet.get().name,
                 content = input,
-                compliance = ComplianceSnippet.PENDING,
+                compliance = snippet.get().status.status,
                 author = snippet.get().userSnippet.name,
                 language = snippet.get().language,
                 extension = snippet.get().extension,
@@ -172,7 +185,7 @@ class ManagerService
                         id = snippet.id!!,
                         name = snippet.name,
                         content = content,
-                        compliance = ComplianceSnippet.PENDING,
+                        compliance = snippet.status.status,
                         author = user.name,
                         language = snippet.language,
                         extension = snippet.extension,
@@ -193,7 +206,7 @@ class ManagerService
                         id = id,
                         name = snippet.get().name,
                         content = content,
-                        compliance = ComplianceSnippet.PENDING,
+                        compliance = snippet.get().status.status,
                         author = snippet.get().userSnippet.name,
                         language = snippet.get().language,
                         extension = snippet.get().extension,
