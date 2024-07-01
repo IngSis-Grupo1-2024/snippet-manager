@@ -8,6 +8,7 @@ import manager.manager.model.dto.*
 import manager.manager.model.input.CreateSnippet
 import manager.manager.model.input.ShareSnippetInput
 import manager.manager.service.ManagerServiceSpec
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -21,10 +22,13 @@ class ManagerController
     constructor(
         private val service: ManagerServiceSpec,
     ) : ManagerControllerSpec {
+        private val logger = LoggerFactory.getLogger(ManagerController::class.java)
+
         override fun saveName(
             jwt: Jwt,
             name: String,
         ): ResponseEntity<String> {
+            logger.info("Saving name")
             val responseBody = this.service.saveName(name.substring(0, name.length - 1), getUserId(jwt.subject))
             return ResponseEntity.status(HttpStatus.CREATED).body(responseBody)
         }
@@ -34,6 +38,7 @@ class ManagerController
             snippetContent: CreateSnippet,
         ): ResponseEntity<Output> {
             try {
+                logger.info("Creating snippet manager")
                 val responseBody = service.createSnippet(snippetContent, getUserId(jwt.subject), jwt.tokenValue)
                 return ResponseEntity.status(HttpStatus.CREATED).body(responseBody)
             } catch (e: HttpClientErrorException) {

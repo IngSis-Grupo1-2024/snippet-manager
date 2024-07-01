@@ -61,7 +61,10 @@ dependencies {
     implementation("com.google.code.gson:gson:2.8.8")
     implementation("org.gradle.redisevents:events:1.1.0-SNAPSHOT")
 
-//    implementation("PrintScript:utils:1.1.0-SNAPSHOT")
+    // new relic logs
+    implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
+    testImplementation("io.projectreactor:reactor-test")
 }
 
 tasks.withType<KotlinCompile> {
@@ -104,4 +107,8 @@ tasks.register<JavaExec>("ktlintFormat") {
         "**.kts",
         "!**/build/**",
     )
+}
+
+tasks.bootJar {
+    archiveFileName.set("${archiveBaseName.get()}.${archiveExtension.get()}")
 }

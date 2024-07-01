@@ -1,0 +1,38 @@
+version: '3.3'
+
+services:
+  api:
+    container_name: "api"
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    environment:
+      DB_USER: sa
+      DB_PASSWORD: password
+      DB_NAME: db
+      DB_HOST: postgres_db
+      DB_PORT: 5432
+      NEW_RELIC_LICENSE_KEY: ${NEW_RELIC_LICENSE_KEY}
+      NEW_RELIC_APP_NAME: ${NEW_RELIC_APP_NAME}
+      AUTH_SERVER_URI: ${AUTH_SERVER_URI}
+      AUTH_CLIENT_ID: ${AUTH_CLIENT_ID}
+      AUTH_CLIENT_SECRET: ${AUTH_CLIENT_SECRET}
+      AUTH0_AUDIENCE: ${AUTH0_AUDIENCE}
+      REDIS_HOST: localhost
+      REDIS_PORT: 6379
+
+  db:
+    container_name: postgres_db
+    image: postgres:12
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: sa
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: db
+    volumes:
+      - db:/var/lib/postgresql/data
+volumes:
+  db:

@@ -9,7 +9,7 @@ data class SnippetStatus(
     @Enumerated(EnumType.STRING)
     @Column(unique = true)
     var status: ComplianceSnippet,
-    @OneToMany(mappedBy = "status_id")
+    @OneToMany(mappedBy = "status")
     val snippet: List<Snippet> = ArrayList(),
 ) : CommonEntity() {
     constructor() : this(ComplianceSnippet.PENDING)
