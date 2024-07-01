@@ -26,8 +26,8 @@ class RunnerController
             try {
                 val output = runnerService.formatSnippet(snippetId, jwt.subject, jwt.tokenValue)
                 return ResponseEntity(output, HttpStatus.OK)
-            } catch (e: NotFoundException) {
-                return ResponseEntity(e.message!!, HttpStatus.NOT_FOUND)
+            } catch (e: Exception) {
+                return ResponseEntity(e.message!!, HttpStatus.INTERNAL_SERVER_ERROR)
             }
         }
     }

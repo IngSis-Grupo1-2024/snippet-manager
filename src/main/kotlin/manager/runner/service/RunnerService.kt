@@ -48,7 +48,7 @@ class RunnerService
             val snippetInfo = FormatInput(snippetContent, snippet.get().language, version, rules, listOf("hi"))
             val response = runnerManager.formatSnippet(token, snippetInfo)
             if (response.error.size > 0) {
-                throw NotFoundException("Error occurred: ${response.error.joinToString()}")
+                throw Exception("Error occurred: ${response.error.joinToString()}")
             }
             val stringResponse = response.output.joinToString()
 
