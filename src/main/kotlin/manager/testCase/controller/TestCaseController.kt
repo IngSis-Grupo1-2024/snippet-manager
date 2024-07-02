@@ -5,6 +5,7 @@ import manager.common.rest.dto.Output
 import manager.common.rest.exception.BadReqException
 import manager.common.rest.exception.ErrorOutput
 import manager.common.rest.exception.NotFoundException
+import manager.testCase.model.dto.TestCaseResult
 import manager.testCase.model.input.TestCaseInput
 import manager.testCase.service.TestCaseService
 import org.springframework.beans.factory.annotation.Autowired
@@ -15,6 +16,7 @@ import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -47,5 +49,19 @@ class TestCaseController
             val userId = getUserId(jwt.subject)
             testCaseService.deleteTestCase(userId, jwt.tokenValue, testCaseId)
             return ResponseEntity.ok("")
+        }
+
+        @PutMapping("{snippetId}")
+        fun runTestCase(
+            @AuthenticationPrincipal jwt: Jwt,
+            @RequestBody testCaseInput: TestCaseInput,
+            @PathVariable snippetId: String,
+        ): ResponseEntity<TestCaseResult> {
+            try{
+                val result = testCaseService.runTestCase(testCaseInput, snippetId, jwt.tokenValue)
+                return ResponseEntity.ok(result)
+            } catch(e: BadReqException) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(TestCaseResult.error)
+            }
         }
     }

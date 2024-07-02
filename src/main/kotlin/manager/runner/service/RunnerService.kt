@@ -6,6 +6,7 @@ import manager.manager.integration.permission.SnippetPerm
 import manager.manager.model.enums.PermissionType
 import manager.manager.model.enums.SnippetLanguage
 import manager.manager.repository.SnippetRepository
+import manager.manager.service.ManagerService
 import manager.rules.dto.RulesDTO
 import manager.rules.integration.configuration.SnippetConf
 import manager.runner.manager.Runner
@@ -23,6 +24,7 @@ class RunnerService
         private val snippetRepository: SnippetRepository,
         private val snippetConf: SnippetConf,
         private val snippetPermImpl: SnippetPerm,
+        private val managerService: ManagerService
     ) {
         fun runSnippet(token: String, snippetId: String): String {
             val content = fetchSnippetContent(snippetId)
@@ -56,7 +58,7 @@ class RunnerService
             val version = fetchSnippetVersion(token, snippet.get().language.toString())
 
             val formattedResponse = executeFormatting(token, snippetContent, snippet.get().language, version, rules, listOf("hi"))
-            updateSnippetInBucket(snippetId, formattedResponse)
+            managerService.updateSnippet(snippetId, formattedResponse, userId, token)
 
             return formattedResponse
         }
@@ -99,13 +101,5 @@ class RunnerService
             }
 
             return response.output.joinToString()
-        }
-
-        private fun updateSnippetInBucket(
-            snippetId: String,
-            content: String,
-        ) {
-            bucketAPI.deleteSnippet(snippetId)
-            bucketAPI.createSnippet(snippetId, content)
         }
     }

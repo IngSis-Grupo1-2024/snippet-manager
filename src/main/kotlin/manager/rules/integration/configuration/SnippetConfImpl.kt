@@ -103,7 +103,7 @@ class SnippetConfImpl(
     private fun getJsonDefault(
         userId: String,
         language: String,
-    ) = getJson(userId, "1.0.0", language).toString()
+    ) = getJson(userId, "v1", language).toString()
 
     override fun getVersion(
         token: String,
