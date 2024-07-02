@@ -1,16 +1,20 @@
 name: "Continuous Deployment to dev"
+
 on:
   push:
     branches:
       - dev
+
 jobs:
   push_to_registry:
     uses: IngSis-Grupo1-2024/snippet-infra/.github/workflows/cd.yml@main
     with:
       image-name: snippet-manager
       env-name: dev
+
   deploy_to_vm:
+    needs: push_to_registry
     uses: IngSis-Grupo1-2024/snippet-infra/.github/workflows/deploy.yml@main
     with:
-      container-name: api-manager 
+      container-name: api-manager
       virtual-machine-key: ${{ secrets.VM_KEY }}
