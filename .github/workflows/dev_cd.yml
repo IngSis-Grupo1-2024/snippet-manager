@@ -9,3 +9,7 @@ jobs:
     with:
       image-name: snippet-manager
       env-name: dev
+  deploy_to_vm:
+    uses: IngSis-Grupo1-2024/snippet-infra/.github/workflows/deploy.yml@main
+    with:
+      container-name: api-manager
