@@ -17,4 +17,5 @@ jobs:
     uses: IngSis-Grupo1-2024/snippet-infra/.github/workflows/deploy.yml@main
     with:
       container-name: api-manager
-      virtual-machine-key: ${{ secrets.VM_KEY }}
+    secrets:
+      VM_KEY: ${{ secrets.VM_KEY }}
