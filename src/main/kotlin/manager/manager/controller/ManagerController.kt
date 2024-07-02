@@ -1,5 +1,6 @@
 package manager.manager.controller
 
+import com.example.snippetmanager.snippet.UpdateSnippet
 import manager.common.rest.BasicRest.Companion.getUserId
 import manager.common.rest.dto.Output
 import manager.common.rest.exception.ErrorOutput
@@ -75,7 +76,7 @@ class ManagerController
 
         override fun updateSnippet(
             snippetId: String,
-            snippetContent: String,
+            snippetContent: UpdateSnippet,
             jwt: Jwt,
         ): ResponseEntity<Output> {
             try {

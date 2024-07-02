@@ -2,7 +2,7 @@ package manager.manager.service
 
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import manager.bucket.BucketAPI
+import manager.common.bucket.BucketAPI
 import manager.common.rest.exception.BadReqException
 import manager.common.rest.exception.NotFoundException
 import manager.manager.controller.ManagerController
@@ -49,10 +49,34 @@ class ManagerService
             token: String,
         ): SnippetDto {
             val user = userRepository.findByUserId(userId) ?: throw NotFoundException("User name was not found")
-            val status = getSnippetStatus(ComplianceSnippet.PENDING)
-
-            val snippet = saveSnippet(input, user, status, token)
-
+            val status =
+                snippetStatusRepository.findByStatus(ComplianceSnippet.PENDING)
+                    ?: snippetStatusRepository.save(SnippetStatus(ComplianceSnippet.PENDING))
+            val snippet =
+                snippetRepository.save(
+                    Snippet(
+                        input.name,
+                        input.language,
+                        input.extension,
+                        user,
+                        status,
+                    ),
+                )
+            GlobalScope.launch {
+                lintProducer.publishEvent(
+                    LintRequest(
+                        input.content,
+                        input.language.name,
+                        "v1",
+                        rulesParser(config.getRules(userId, token, "LINTING")),
+                        listOf("Hello"),
+                        snippet.id.toString(),
+                        userId
+                    )
+                )
+            }
+            bucketAPI.createSnippet(snippet.id.toString(), input.content)
+            addOwnerPermission(userId, snippet.id!!, token)
             return SnippetDto(
                 id = snippet.id!!,
                 name = snippet.name,
@@ -111,7 +135,7 @@ class ManagerService
                 id = snippet.get().id!!,
                 name = snippet.get().name,
                 content = newContent,
-                compliance = ComplianceSnippet.PENDING,
+                compliance = snippet.get().status.status,
                 author = snippet.get().userSnippet.name,
                 language = snippet.get().language,
                 extension = snippet.get().extension,
@@ -145,6 +169,44 @@ class ManagerService
             return snippetsThatIOwn.merge(snippetShared)
         }
 
+        private fun getSnippetThatIOwn(user: UserSnippet): SnippetListDto =
+            SnippetListDto(
+                user.snippet.map { snippet: Snippet ->
+                    val content = bucketAPI.getSnippet(snippet.id.toString())
+                    SnippetDto(
+                        id = snippet.id!!,
+                        name = snippet.name,
+                        content = content,
+                        compliance = ComplianceSnippet.PENDING,
+                        author = user.name,
+                        language = snippet.language,
+                        extension = snippet.extension,
+                    )
+                },
+            )
+
+        private fun getSnippetsShared(
+            userId: String,
+            token: String,
+        ): SnippetListDto {
+            val snippetIds = this.snippetPerm.getSharedSnippets(userId, token)
+            return SnippetListDto(
+                snippetIds.map { id: Long ->
+                    val snippet = this.snippetRepository.findById(id)
+                    val content = bucketAPI.getSnippet(id.toString())
+                    SnippetDto(
+                        id = id,
+                        name = snippet.get().name,
+                        content = content,
+                        compliance = ComplianceSnippet.PENDING,
+                        author = snippet.get().userSnippet.name,
+                        language = snippet.get().language,
+                        extension = snippet.get().extension,
+                    )
+                },
+            )
+        }
+
         override fun getUserFriends(userId: String): UsersDto {
             val users: List<UserSnippet> = this.userRepository.findAll()
             val userDtoList =
@@ -174,8 +236,14 @@ class ManagerService
             complianceSnippet: ComplianceSnippet,
         ): ComplianceSnippet {
             logger.info("Updating snippet status for snippet $snippetId to $complianceSnippet")
-            val snippet = getSnippetByID(snippetId)
-            val status = getSnippetStatus(complianceSnippet)
+            val snippet = this.snippetRepository.findById(snippetId.toLong())
+            val user = this.userRepository.findByUserId(userId)
+            if (snippet.isEmpty) throw NotFoundException("Snippet was not found")
+            if (user == null) throw NotFoundException("User was not found")
+            val status =
+                snippetStatusRepository.findByStatus(
+                    complianceSnippet,
+                ) ?: snippetStatusRepository.save(SnippetStatus(complianceSnippet))
             snippet.get().status = status
             this.snippetRepository.save(snippet.get())
             return snippet.get().status.status
