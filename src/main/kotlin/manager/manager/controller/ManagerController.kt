@@ -81,7 +81,7 @@ class ManagerController
         ): ResponseEntity<Output> {
             try {
                 logger.info("Updating snippet")
-                val responseBody: SnippetDto = service.updateSnippet(snippetId, snippetContent, getUserId(jwt.subject), jwt.tokenValue)
+                val responseBody: SnippetDto = service.updateSnippet(snippetId, snippetContent.content, getUserId(jwt.subject), jwt.tokenValue)
                 return ResponseEntity.ok(responseBody)
             } catch (e: HttpClientErrorException) {
                 return getErrorOutputResponse(e.statusCode, e.message!!)

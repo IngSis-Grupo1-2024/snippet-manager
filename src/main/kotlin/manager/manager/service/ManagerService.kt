@@ -38,7 +38,7 @@ class ManagerService
         private val snippetPerm: SnippetPerm,
         private val snippetStatusRepository: SnippetStatusRepository,
         private val lintProducer: LintProducer,
-        private val config: SnippetConf,
+        private val snippetConf: SnippetConf,
     ) : ManagerServiceSpec {
         private val logger = LoggerFactory.getLogger(ManagerController::class.java)
 
@@ -49,34 +49,10 @@ class ManagerService
             token: String,
         ): SnippetDto {
             val user = userRepository.findByUserId(userId) ?: throw NotFoundException("User name was not found")
-            val status =
-                snippetStatusRepository.findByStatus(ComplianceSnippet.PENDING)
-                    ?: snippetStatusRepository.save(SnippetStatus(ComplianceSnippet.PENDING))
-            val snippet =
-                snippetRepository.save(
-                    Snippet(
-                        input.name,
-                        input.language,
-                        input.extension,
-                        user,
-                        status,
-                    ),
-                )
-            GlobalScope.launch {
-                lintProducer.publishEvent(
-                    LintRequest(
-                        input.content,
-                        input.language.name,
-                        "v1",
-                        rulesParser(config.getRules(userId, token, "LINTING")),
-                        listOf("Hello"),
-                        snippet.id.toString(),
-                        userId
-                    )
-                )
-            }
-            bucketAPI.createSnippet(snippet.id.toString(), input.content)
-            addOwnerPermission(userId, snippet.id!!, token)
+            val status = getSnippetStatus(ComplianceSnippet.PENDING)
+
+            val snippet = saveSnippet(input, user, status, token)
+
             return SnippetDto(
                 id = snippet.id!!,
                 name = snippet.name,
@@ -92,15 +68,7 @@ class ManagerService
             val snippet = snippetRepository.findById(snippetId.toLong())
             logger.info("Getting snippet content from bucket, snippetId = $snippetId")
             val content = bucketAPI.getSnippet(snippetId)
-            return SnippetDto(
-                id = snippet.get().id!!,
-                name = snippet.get().name,
-                content = content,
-                compliance = snippet.get().status.status,
-                author = snippet.get().userSnippet.name,
-                language = snippet.get().language,
-                extension = snippet.get().extension,
-            )
+            return snippetDto(snippet.get().id!!, snippet, content)
         }
 
         @Transactional
@@ -131,15 +99,7 @@ class ManagerService
 
             updateContentInBucket(snippetId, newContent)
             publishEventBySnippet(snippetId, userId, token)
-            return SnippetDto(
-                id = snippet.get().id!!,
-                name = snippet.get().name,
-                content = newContent,
-                compliance = snippet.get().status.status,
-                author = snippet.get().userSnippet.name,
-                language = snippet.get().language,
-                extension = snippet.get().extension,
-            )
+            return snippetDto(snippet.get().id!!, snippet, newContent)
         }
 
         override fun getFileTypes(): List<FileTypeDto> {
@@ -167,44 +127,6 @@ class ManagerService
             val snippetsThatIOwn: SnippetListDto = getSnippetThatIOwn(user)
             val snippetShared: SnippetListDto = getSnippetsShared(userId, token)
             return snippetsThatIOwn.merge(snippetShared)
-        }
-
-        private fun getSnippetThatIOwn(user: UserSnippet): SnippetListDto =
-            SnippetListDto(
-                user.snippet.map { snippet: Snippet ->
-                    val content = bucketAPI.getSnippet(snippet.id.toString())
-                    SnippetDto(
-                        id = snippet.id!!,
-                        name = snippet.name,
-                        content = content,
-                        compliance = ComplianceSnippet.PENDING,
-                        author = user.name,
-                        language = snippet.language,
-                        extension = snippet.extension,
-                    )
-                },
-            )
-
-        private fun getSnippetsShared(
-            userId: String,
-            token: String,
-        ): SnippetListDto {
-            val snippetIds = this.snippetPerm.getSharedSnippets(userId, token)
-            return SnippetListDto(
-                snippetIds.map { id: Long ->
-                    val snippet = this.snippetRepository.findById(id)
-                    val content = bucketAPI.getSnippet(id.toString())
-                    SnippetDto(
-                        id = id,
-                        name = snippet.get().name,
-                        content = content,
-                        compliance = ComplianceSnippet.PENDING,
-                        author = snippet.get().userSnippet.name,
-                        language = snippet.get().language,
-                        extension = snippet.get().extension,
-                    )
-                },
-            )
         }
 
         override fun getUserFriends(userId: String): UsersDto {
@@ -236,14 +158,8 @@ class ManagerService
             complianceSnippet: ComplianceSnippet,
         ): ComplianceSnippet {
             logger.info("Updating snippet status for snippet $snippetId to $complianceSnippet")
-            val snippet = this.snippetRepository.findById(snippetId.toLong())
-            val user = this.userRepository.findByUserId(userId)
-            if (snippet.isEmpty) throw NotFoundException("Snippet was not found")
-            if (user == null) throw NotFoundException("User was not found")
-            val status =
-                snippetStatusRepository.findByStatus(
-                    complianceSnippet,
-                ) ?: snippetStatusRepository.save(SnippetStatus(complianceSnippet))
+            val snippet = getSnippetByID(snippetId)
+            val status = getSnippetStatus(complianceSnippet)
             snippet.get().status = status
             this.snippetRepository.save(snippet.get())
             return snippet.get().status.status
@@ -257,7 +173,7 @@ class ManagerService
                         id = snippet.id!!,
                         name = snippet.name,
                         content = content,
-                        compliance = ComplianceSnippet.PENDING,
+                        compliance = snippet.status.status,
                         author = user.name,
                         language = snippet.language,
                         extension = snippet.extension,
@@ -287,12 +203,9 @@ class ManagerService
             userId: String,
             token: String,
         ) {
-            val rules: RulesOutput = this.config.getRules(userId, token, "LINTING")
             val snippet: Snippet = this.snippetRepository.findById(snippetId.toLong()).get()
             val snippetContent: String = bucketAPI.getSnippet(snippetId)
-            GlobalScope.launch {
-                lintProducer.publishEvent(snippetContent, snippet, rules, "v1")
-            }
+            publishLintEvent(userId, token, snippetContent, snippet)
         }
 
         private fun saveSnippet(
@@ -308,10 +221,27 @@ class ManagerService
             bucketAPI.createSnippet(snippet.id.toString(), input.content)
 
             addOwnerPermission(user.userId, snippet.id!!, token)
+
+            publishLintEvent(user.userId, token, input.content, snippet)
             return snippet
         }
 
-        private fun getSnippet(
+    private fun publishLintEvent(
+        userId: String,
+        token: String,
+        content: String,
+        snippet: Snippet
+    ) {
+        val rules: RulesOutput = this.snippetConf.getRules(userId, token, "LINTING")
+
+        val version = snippetConf.getVersion(token, snippet.language.toString())
+
+        GlobalScope.launch {
+            lintProducer.publishEvent(content, snippet, rules, version)
+        }
+    }
+
+    private fun getSnippet(
             input: CreateSnippet,
             user: UserSnippet,
             status: SnippetStatus,
@@ -365,16 +295,22 @@ class ManagerService
                 snippetIds.map { id: Long ->
                     val snippet = this.snippetRepository.findById(id)
                     val content = bucketAPI.getSnippet(id.toString())
-                    SnippetDto(
-                        id = id,
-                        name = snippet.get().name,
-                        content = content,
-                        compliance = ComplianceSnippet.PENDING,
-                        author = snippet.get().userSnippet.name,
-                        language = snippet.get().language,
-                        extension = snippet.get().extension,
-                    )
+                    snippetDto(id, snippet, content)
                 },
             )
         }
-    }
+
+    private fun snippetDto(
+        id: Long,
+        snippet: Optional<Snippet>,
+        content: String
+    ) = SnippetDto(
+        id = id,
+        name = snippet.get().name,
+        content = content,
+        compliance = snippet.get().status.status,
+        author = snippet.get().userSnippet.name,
+        language = snippet.get().language,
+        extension = snippet.get().extension,
+    )
+}

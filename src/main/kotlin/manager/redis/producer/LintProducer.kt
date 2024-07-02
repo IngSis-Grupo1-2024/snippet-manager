@@ -46,7 +46,7 @@ class LintProducer
                 snippet.language.toString(),
                 version,
                 rules,
-                listOf("Hello"),
+                listOf(""),
                 snippet.id.toString(),
                 snippet.userSnippet.userId,
             )
