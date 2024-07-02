@@ -2,7 +2,7 @@ package manager.rules.service
 
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import manager.bucket.BucketAPI
+import manager.common.bucket.BucketAPI
 import manager.common.rest.exception.NotFoundException
 import manager.manager.model.enums.SnippetLanguage
 import manager.manager.repository.UserRepository
