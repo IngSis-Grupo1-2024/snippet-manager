@@ -14,5 +14,3 @@ jobs:
     with:
       container-name: api-manager 
       virtual-machine-key: ${{ secrets.VM_KEY }}
-    secrets:
-      VM_KEY: ${{ secrets.VM_KEY }} 
