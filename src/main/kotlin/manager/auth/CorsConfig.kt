@@ -9,8 +9,8 @@ class CorsConfig {
     @Bean
     fun corsFilter(): CorsConfiguration {
         val config = CorsConfiguration()
-        config.allowCredentials = true
-        config.allowedOrigins = listOf("http://localhost:5173")
+        config.allowCredentials = false
+        config.allowedOrigins = listOf("http://localhost:5173", "https://snippet-runner-dev.duckdns.org/*")
         config.allowedMethods = listOf("*")
         config.allowedHeaders = listOf("*")
         return config
