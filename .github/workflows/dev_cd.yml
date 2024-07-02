@@ -12,4 +12,4 @@ jobs:
   deploy_to_vm:
     uses: IngSis-Grupo1-2024/snippet-infra/.github/workflows/deploy.yml@main
     with:
-      container-name: api-manager
+      container-name: api-manager 
