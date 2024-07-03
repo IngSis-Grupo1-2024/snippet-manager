@@ -49,10 +49,11 @@ class RulesService
                     GlobalScope.launch {
                         logger.info("Getting content from bucket of snippet id ${snippet.id}")
                         val content = bucketAPI.getSnippet(snippet.id.toString())
+
                         lintProducer.publishEvent(
                             content,
                             snippet,
-                            getLintingRules(userId, tokenValue),
+                            getLintingRulesFromDto(updateRulesDTO),
                             "v1",
                         )
                     }
@@ -60,11 +61,27 @@ class RulesService
             }
         }
 
-        fun getLintingRules(
+    private fun getLintingRulesFromDto(rules: UpdateRulesDTO): RulesOutput {
+        logger.info("Getting linting rules from update rules dto")
+        return RulesOutput(
+            rules.rules.map { rule ->
+                RulesDTO(
+                    id = rule.id.toLong(),
+                    name = rule.name,
+                    isActive = rule.isActive,
+                    value = rule.value,
+                    parent = rule.parent,
+                )
+            },
+        )
+    }
+
+    fun getLintingRules(
             userId: String,
             tokenValue: String,
         ): RulesOutput {
             val rules = snippetConf.getRules(userId, tokenValue, "LINTING")
+            logger.info("Getting rules of LINTING rules for user $userId.")
             return RulesOutput(
                 rules.rules.map { rule ->
                     RulesDTO(

@@ -53,7 +53,7 @@ class RulesController
             @RequestBody updateRulesDTO: UpdateRulesDTO,
         ): ResponseEntity<String> {
             try{
-                logger.info("Update ${updateRulesDTO.type} rules for user ${jwt.subject}")
+                logger.info("Update ${updateRulesDTO.type} rules for user ${jwt.subject}. \n Rules: ${updateRulesDTO.rules}")
                 this.rulesService.updateRules(updateRulesDTO, getUserId(jwt.subject), jwt.tokenValue)
                 return ResponseEntity.ok("")
             } catch(e: NotFoundException){
