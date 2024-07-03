@@ -1,11 +1,10 @@
 package rules.tests.model
 
-import com.google.gson.JsonObject
+import manager.manager.rules.model.input.ConfigInput
 import manager.rules.dto.RulesDTO
 import manager.rules.model.dto.RulesOutput
 import manager.rules.model.dto.UpdateRuleDTO
 import manager.rules.model.dto.UpdateRulesDTO
-import manager.manager.rules.model.input.ConfigInput
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
@@ -60,4 +59,47 @@ class RulesModelTests {
         assertEquals("v1", json.get("version").asString)
         assertEquals("Kotlin", json.get("language").asString)
     }
+
+    @Test
+    fun `test setters`() {
+        val rulesDTO = RulesDTO(
+            id = 1L,
+            name = "InitialName",
+            isActive = false,
+            value = 10,
+            parent = "InitialParent"
+        )
+
+        rulesDTO.name = "UpdatedName"
+        rulesDTO.isActive = true
+        rulesDTO.value = 20
+
+        assertEquals("UpdatedName", rulesDTO.name)
+        assertEquals(true, rulesDTO.isActive)
+        assertEquals(20, rulesDTO.value)
+    }
+
+    @Test
+    fun `constructor assigns properties correctly`() {
+        val updateRuleDTO = UpdateRuleDTO(id = 1, name = "Test Rule", value = 100, isActive = true)
+        assertEquals(1, updateRuleDTO.id)
+        assertEquals("Test Rule", updateRuleDTO.name)
+        assertEquals(100, updateRuleDTO.value)
+        assertEquals(true, updateRuleDTO.isActive)
+    }
+
+    @Test
+    fun `test value setter and getter`() {
+        val updateRuleDTO = UpdateRuleDTO(id = 2, name = "Another Test Rule", value = null)
+        updateRuleDTO.value = 200 // Testing setter
+        assertEquals(200, updateRuleDTO.value) // Testing getter
+    }
+
+    @Test
+    fun `test isActive setter and getter`() {
+        val updateRuleDTO = UpdateRuleDTO(id = 3, name = "Yet Another Test Rule", isActive = false, value = 300)
+        updateRuleDTO.isActive = true // Testing setter
+        assertEquals(true, updateRuleDTO.isActive) // Testing getter
+    }
+
 }

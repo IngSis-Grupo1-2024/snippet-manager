@@ -15,15 +15,13 @@ import org.mockito.Mockito.*
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 import org.slf4j.Logger
 import org.slf4j.MDC
-import org.springframework.http.HttpStatus
 import org.springframework.mock.http.server.reactive.MockServerHttpRequest
 import org.springframework.mock.web.server.MockServerWebExchange
 import org.springframework.web.server.WebFilterChain
 import reactor.core.publisher.Mono
-import reactor.test.StepVerifier
-import kotlin.reflect.full.memberProperties
 
 @ExtendWith(MockitoExtension::class)
 class CorrelationIdFilterTest {
@@ -42,6 +40,8 @@ class CorrelationIdFilterTest {
 
     @Captor
     private lateinit var stringCaptor: ArgumentCaptor<String>
+    private val requestLogFilter = RequestLogFilter()
+
 
     private val logger: Logger = mock()
     private val webFilterChain: WebFilterChain = mock {
