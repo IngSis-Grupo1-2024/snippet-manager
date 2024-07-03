@@ -1,6 +1,5 @@
 package manager.manager.controller
 
-import com.example.snippetmanager.snippet.UpdateSnippet
 import manager.common.rest.BasicRest.Companion.getUserId
 import manager.common.rest.dto.Output
 import manager.common.rest.exception.ErrorOutput
@@ -8,6 +7,7 @@ import manager.common.rest.exception.NotFoundException
 import manager.manager.model.dto.*
 import manager.manager.model.input.CreateSnippet
 import manager.manager.model.input.ShareSnippetInput
+import manager.manager.model.input.UpdateSnippet
 import manager.manager.service.ManagerServiceSpec
 import org.apache.coyote.BadRequestException
 import org.slf4j.LoggerFactory

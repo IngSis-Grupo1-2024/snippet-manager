@@ -1,6 +1,6 @@
 package manager.rules.integration.configuration
 
-import com.example.demo.testCase.model.dto.TestCaseDto
+import manager.testCase.model.dto.TestCaseDto
 import com.nimbusds.jose.shaded.gson.Gson
 import manager.common.rest.BasicRest
 import manager.manager.rules.model.input.ConfigInput.Companion.getJson

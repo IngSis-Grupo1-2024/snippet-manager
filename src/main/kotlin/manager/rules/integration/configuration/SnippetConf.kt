@@ -1,6 +1,6 @@
 package manager.rules.integration.configuration
 
-import com.example.demo.testCase.model.dto.TestCaseDto
+import manager.testCase.model.dto.TestCaseDto
 import manager.rules.model.dto.RulesOutput
 import manager.rules.model.dto.UpdateRulesDTO
 import manager.testCase.model.input.TestCaseInput

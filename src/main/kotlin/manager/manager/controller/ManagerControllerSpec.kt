@@ -1,10 +1,10 @@
 package manager.manager.controller
 
-import com.example.snippetmanager.snippet.UpdateSnippet
 import manager.common.rest.dto.Output
 import manager.manager.model.dto.FileTypeDto
 import manager.manager.model.input.CreateSnippet
 import manager.manager.model.input.ShareSnippetInput
+import manager.manager.model.input.UpdateSnippet
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.oauth2.jwt.Jwt

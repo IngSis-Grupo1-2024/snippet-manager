@@ -1,4 +1,4 @@
-package com.example.snippetmanager.snippet
+package manager.manager.model.input
 
 import manager.manager.model.enums.SnippetLanguage
 

@@ -10,7 +10,7 @@ data class UserSnippet(
     @Column
     var name: String,
     @OneToMany(mappedBy = "userSnippet")
-    val snippet: List<Snippet> = ArrayList(),
+    var snippet: List<Snippet> = ArrayList(),
 ) : CommonEntity() {
     protected constructor() : this("", "")
 }
