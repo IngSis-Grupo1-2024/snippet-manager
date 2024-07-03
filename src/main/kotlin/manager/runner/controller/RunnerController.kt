@@ -1,8 +1,6 @@
 package manager.runner.controller
 
-import manager.common.rest.dto.Output
 import manager.runner.service.RunnerService
-import manager.snippet.SnippetInfo
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -13,7 +11,10 @@ import org.springframework.web.bind.annotation.RestController
 class RunnerController
     @Autowired
     constructor(private val runnerService: RunnerService) : RunnerControllerSpec {
-        override fun runSnippet(jwt: Jwt, snippetId: String): ResponseEntity<String> {
+        override fun runSnippet(
+            jwt: Jwt,
+            snippetId: String,
+        ): ResponseEntity<String> {
             try {
                 val output = runnerService.runSnippet(jwt.tokenValue, snippetId)
                 return ResponseEntity(output, HttpStatus.OK)

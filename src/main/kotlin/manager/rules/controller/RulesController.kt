@@ -19,6 +19,7 @@ class RulesController
     @Autowired
     constructor(private val rulesService: RulesService) {
         private val logger = LoggerFactory.getLogger(RulesController::class.java)
+
         @PostMapping("/default")
         fun createDefaultConfiguration(
             @AuthenticationPrincipal jwt: Jwt,
@@ -52,11 +53,11 @@ class RulesController
             @AuthenticationPrincipal jwt: Jwt,
             @RequestBody updateRulesDTO: UpdateRulesDTO,
         ): ResponseEntity<String> {
-            try{
+            try {
                 logger.info("Update ${updateRulesDTO.type} rules for user ${jwt.subject}. \n Rules: ${updateRulesDTO.rules}")
                 this.rulesService.updateRules(updateRulesDTO, getUserId(jwt.subject), jwt.tokenValue)
                 return ResponseEntity.ok("")
-            } catch(e: NotFoundException){
+            } catch (e: NotFoundException) {
                 logger.warn(e.message)
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.message)
             }

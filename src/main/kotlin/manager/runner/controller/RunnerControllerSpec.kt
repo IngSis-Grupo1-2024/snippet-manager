@@ -1,7 +1,5 @@
 package manager.runner.controller
 
-import manager.common.rest.dto.Output
-import manager.snippet.SnippetInfo
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.oauth2.jwt.Jwt

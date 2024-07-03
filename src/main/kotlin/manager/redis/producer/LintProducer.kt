@@ -51,15 +51,55 @@ class LintProducer
                 snippet.userSnippet.userId,
             )
 
-        private fun rulesParser(rulesOutput: RulesOutput): List<LintRulesInput> =
-            rulesOutput.rules.map { rule ->
-                LintRulesInput(
-                    rule.parent,
-                    rule.isActive,
-                    rule.name == "expression",
-                    rule.name == "identifier",
-                    rule.name == "literal",
-                    if (rule.name == "snake_case" || rule.name == "") "snake case" else "camel case",
-                )
+        private fun rulesParser(rulesOutput: RulesOutput): List<LintRulesInput> {
+            val parents = rulesOutput.rules.map { rule -> rule.parent }.distinct()
+
+            val rules = parents.map { parent ->
+                if(parent != "identifier_format")
+                    getBasicLintRulesInput(parent, rulesOutput)
+                else
+                    getFormatLintRuleInput(parent, rulesOutput)
             }
+            return rules
+        }
+
+    private fun getFormatLintRuleInput(
+        parent: String,
+        rulesOutput: RulesOutput
+    ) = LintRulesInput(
+        parent,
+        true,
+        false,
+        false,
+        false,
+        getFormatValue(rulesOutput)
+    )
+
+    private fun getBasicLintRulesInput(
+        parent: String,
+        rulesOutput: RulesOutput
+    ) = LintRulesInput(
+        parent,
+        true,
+        getRuleNameValue(rulesOutput, parent, "expression"),
+        getRuleNameValue(rulesOutput, parent, "identifier"),
+        getRuleNameValue(rulesOutput, parent, "literal"),
+        ""
+    )
+
+    private fun getRuleNameValue(
+            rulesOutput: RulesOutput,
+            parent: String,
+            ruleName: String,
+        ): Boolean =
+            rulesOutput.rules.filter {
+                rule -> rule.parent == parent && rule.name == ruleName
+            }.first().isActive
+
+        private fun getFormatValue(
+            rulesOutput: RulesOutput,
+        ): String {
+            return if(getRuleNameValue(rulesOutput, "identifier_format", "snake_case")) "snake case"
+            else "camel case"
+        }
     }

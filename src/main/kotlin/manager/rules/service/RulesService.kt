@@ -27,6 +27,7 @@ class RulesService
         private val bucketAPI: BucketAPI,
     ) {
         private val logger = LoggerFactory.getLogger(RulesController::class.java)
+
         fun createDefaultConf(
             userId: String,
             token: String,
@@ -49,11 +50,12 @@ class RulesService
                     GlobalScope.launch {
                         logger.info("Getting content from bucket of snippet id ${snippet.id}")
                         val content = bucketAPI.getSnippet(snippet.id.toString())
+                        snippetConf.getRules(userId, tokenValue, "LINTING")
 
                         lintProducer.publishEvent(
                             content,
                             snippet,
-                            getLintingRulesFromDto(updateRulesDTO),
+                            snippetConf.getRules(userId, tokenValue, "LINTING"),
                             "v1",
                         )
                     }
@@ -61,22 +63,22 @@ class RulesService
             }
         }
 
-    private fun getLintingRulesFromDto(rules: UpdateRulesDTO): RulesOutput {
-        logger.info("Getting linting rules from update rules dto")
-        return RulesOutput(
-            rules.rules.map { rule ->
-                RulesDTO(
-                    id = rule.id.toLong(),
-                    name = rule.name,
-                    isActive = rule.isActive,
-                    value = rule.value,
-                    parent = rule.parent,
-                )
-            },
-        )
-    }
+        private fun getLintingRulesFromDto(rules: UpdateRulesDTO): RulesOutput {
+            logger.info("Getting linting rules from update rules dto")
+            return RulesOutput(
+                rules.rules.map { rule ->
+                    RulesDTO(
+                        id = rule.id.toLong(),
+                        name = rule.name,
+                        isActive = rule.isActive,
+                        value = rule.value,
+                        parent = rule.parent,
+                    )
+                },
+            )
+        }
 
-    fun getLintingRules(
+        fun getLintingRules(
             userId: String,
             tokenValue: String,
         ): RulesOutput {

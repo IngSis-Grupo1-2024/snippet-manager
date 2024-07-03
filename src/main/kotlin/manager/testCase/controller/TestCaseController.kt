@@ -5,8 +5,8 @@ import manager.common.rest.dto.Output
 import manager.common.rest.exception.BadReqException
 import manager.common.rest.exception.ErrorOutput
 import manager.common.rest.exception.NotFoundException
-import manager.testCase.model.dto.TestCaseResult
 import manager.rules.controller.RulesController
+import manager.testCase.model.dto.TestCaseResult
 import manager.testCase.model.input.TestCaseInput
 import manager.testCase.service.TestCaseService
 import org.slf4j.LoggerFactory
@@ -53,7 +53,7 @@ class TestCaseController
             @PathVariable testCaseId: String,
         ): ResponseEntity<String> {
             val userId = getUserId(jwt.subject)
-            try{
+            try {
                 testCaseService.deleteTestCase(userId, jwt.tokenValue, testCaseId)
                 return ResponseEntity.ok("")
             } catch (e: BadReqException) {
@@ -68,10 +68,10 @@ class TestCaseController
             @RequestBody testCaseInput: TestCaseInput,
             @PathVariable snippetId: String,
         ): ResponseEntity<TestCaseResult> {
-            try{
+            try {
                 val result = testCaseService.runTestCase(testCaseInput, snippetId, jwt.tokenValue)
                 return ResponseEntity.ok(result)
-            } catch(e: BadReqException) {
+            } catch (e: BadReqException) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(TestCaseResult.error)
             }
         }

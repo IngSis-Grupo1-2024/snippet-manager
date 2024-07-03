@@ -1,6 +1,4 @@
-package com.example.snippetmanager.snippet
-
-import manager.manager.model.enums.SnippetLanguage
+package manager.manager.model.input
 
 data class UpdateSnippet(
     val content: String,

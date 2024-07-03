@@ -1,7 +1,6 @@
 package manager.runner.service
 
 import manager.common.bucket.BucketAPI
-import manager.common.rest.dto.Output
 import manager.manager.integration.permission.SnippetPerm
 import manager.manager.model.enums.PermissionType
 import manager.manager.model.enums.SnippetLanguage
@@ -24,19 +23,25 @@ class RunnerService
         private val snippetRepository: SnippetRepository,
         private val snippetConf: SnippetConf,
         private val snippetPermImpl: SnippetPerm,
-        private val managerService: ManagerService
+        private val managerService: ManagerService,
     ) {
-        fun runSnippet(token: String, snippetId: String): String {
+        fun runSnippet(
+            token: String,
+            snippetId: String,
+        ): String {
             val content = fetchSnippetContent(snippetId)
             val snippet = snippetRepository.findById(snippetId.toLong())
 
             val version = fetchSnippetVersion(token, snippet.get().language.toString())
-            val snippetInfo = SnippetInfo(snippet.get().name,
-                                            content,
-                                            snippet.get().language,
-                                            version,
-                                            snippet.get().extension,
-                                            listOf("hi"))
+            val snippetInfo =
+                SnippetInfo(
+                    snippet.get().name,
+                    content,
+                    snippet.get().language,
+                    version,
+                    snippet.get().extension,
+                    listOf("hi"),
+                )
 
             val response = runnerManager.runSnippet(token, snippetInfo)
             if (response.error.isNotEmpty()) {

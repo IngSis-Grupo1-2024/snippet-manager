@@ -1,6 +1,6 @@
 package manager.manager.controller
 
-import com.example.snippetmanager.snippet.UpdateSnippet
+import manager.manager.model.input.UpdateSnippet
 import manager.common.rest.BasicRest.Companion.getUserId
 import manager.common.rest.dto.Output
 import manager.common.rest.exception.ErrorOutput
@@ -81,7 +81,13 @@ class ManagerController
         ): ResponseEntity<Output> {
             try {
                 logger.info("Updating snippet")
-                val responseBody: SnippetDto = service.updateSnippet(snippetId, snippetContent.content, getUserId(jwt.subject), jwt.tokenValue)
+                val responseBody: SnippetDto =
+                    service.updateSnippet(
+                        snippetId,
+                        snippetContent.content,
+                        getUserId(jwt.subject),
+                        jwt.tokenValue,
+                    )
                 return ResponseEntity.ok(responseBody)
             } catch (e: HttpClientErrorException) {
                 return getErrorOutputResponse(e.statusCode, e.message!!)

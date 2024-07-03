@@ -28,7 +28,8 @@ class TestCaseService
         private val runnerManager: Runner,
         private val bucketAPI: BucketAPI,
     ) {
-    private val logger = LoggerFactory.getLogger(RulesController::class.java)
+        private val logger = LoggerFactory.getLogger(RulesController::class.java)
+
         fun postTestCase(
             userId: String,
             token: String,
@@ -46,7 +47,7 @@ class TestCaseService
             return snippetConf.postTestCase(token, testCaseInput)
         }
 
-    fun deleteTestCase(
+        fun deleteTestCase(
             userId: String,
             token: String,
             testCaseId: String,
@@ -62,7 +63,11 @@ class TestCaseService
             snippetConf.deleteTestCase(token, testCaseId)
         }
 
-        fun runTestCase(testCaseInput: TestCaseInput, snippetId: String, token: String): TestCaseResult {
+        fun runTestCase(
+            testCaseInput: TestCaseInput,
+            snippetId: String,
+            token: String,
+        ): TestCaseResult {
             val snippet = checkIfSnippetExists(testCaseInput)
             val snippetInfo = getSnippet(snippet, testCaseInput.input, token)
             val output: RunningOutput = runnerManager.runSnippet(token, snippetInfo)
@@ -70,38 +75,50 @@ class TestCaseService
             return verifyOutput(output, testCaseInput.output)
         }
 
-    private fun verifyOutput(actual: RunningOutput, expected: List<String>?): TestCaseResult {
-        return if(actual.error.isNotEmpty()) TestCaseResult.fail
-        else if(expected.isNullOrEmpty() && actual.output.isEmpty()) TestCaseResult.success
-        else if(expected == actual.output) TestCaseResult.success
-        else TestCaseResult.fail
-    }
+        private fun verifyOutput(
+            actual: RunningOutput,
+            expected: List<String>?,
+        ): TestCaseResult {
+            return if (actual.error.isNotEmpty()) {
+                TestCaseResult.fail
+            } else if (expected.isNullOrEmpty() && actual.output.isEmpty()) {
+                TestCaseResult.success
+            } else if (expected == actual.output) {
+                TestCaseResult.success
+            } else {
+                TestCaseResult.fail
+            }
+        }
 
-    private fun getSnippet(snippet: Snippet, input: List<String>?, token: String): SnippetInfo {
-        val content = bucketAPI.getSnippet(snippet.id.toString())
-        val version = snippetConf.getVersion(token, snippet.language.toString())
+        private fun getSnippet(
+            snippet: Snippet,
+            input: List<String>?,
+            token: String,
+        ): SnippetInfo {
+            val content = bucketAPI.getSnippet(snippet.id.toString())
+            val version = snippetConf.getVersion(token, snippet.language.toString())
 
-        if(input.isNullOrEmpty()) return snippetInfo(snippet, content, emptyList(), version)
-        return snippetInfo(snippet, content, input, version)
-    }
+            if (input.isNullOrEmpty()) return snippetInfo(snippet, content, emptyList(), version)
+            return snippetInfo(snippet, content, input, version)
+        }
 
-    private fun snippetInfo(
-        snippet: Snippet,
-        content: String,
-        input: List<String>,
-        version: String
-    ): SnippetInfo {
-        return SnippetInfo(
-            name = snippet.name,
-            content = content,
-            language = snippet.language,
-            version = version,
-            extension = snippet.extension,
-            input = input
-        )
-    }
+        private fun snippetInfo(
+            snippet: Snippet,
+            content: String,
+            input: List<String>,
+            version: String,
+        ): SnippetInfo {
+            return SnippetInfo(
+                name = snippet.name,
+                content = content,
+                language = snippet.language,
+                version = version,
+                extension = snippet.extension,
+                input = input,
+            )
+        }
 
-    private fun userIsNotTheOwner(
+        private fun userIsNotTheOwner(
             snippetId: String,
             userId: String,
             token: String,
@@ -110,10 +127,9 @@ class TestCaseService
             return permissionType != PermissionType.OWNER
         }
 
-
-    private fun checkIfSnippetExists(testCaseInput: TestCaseInput): Snippet {
-        val snippet = snippetRepo.findById(testCaseInput.snippetId.toLong())
-        if(snippet.isEmpty) throw BadReqException("Snippet not found")
-        return snippet.get()
+        private fun checkIfSnippetExists(testCaseInput: TestCaseInput): Snippet {
+            val snippet = snippetRepo.findById(testCaseInput.snippetId.toLong())
+            if (snippet.isEmpty) throw BadReqException("Snippet not found")
+            return snippet.get()
+        }
     }
-}

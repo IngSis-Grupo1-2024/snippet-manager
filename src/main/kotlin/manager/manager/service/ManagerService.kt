@@ -226,22 +226,22 @@ class ManagerService
             return snippet
         }
 
-    private fun publishLintEvent(
-        userId: String,
-        token: String,
-        content: String,
-        snippet: Snippet
-    ) {
-        val rules: RulesOutput = this.snippetConf.getRules(userId, token, "LINTING")
+        private fun publishLintEvent(
+            userId: String,
+            token: String,
+            content: String,
+            snippet: Snippet,
+        ) {
+            val rules: RulesOutput = this.snippetConf.getRules(userId, token, "LINTING")
 
-        val version = snippetConf.getVersion(token, snippet.language.toString())
+            val version = snippetConf.getVersion(token, snippet.language.toString())
 
-        GlobalScope.launch {
-            lintProducer.publishEvent(content, snippet, rules, version)
+            GlobalScope.launch {
+                lintProducer.publishEvent(content, snippet, rules, version)
+            }
         }
-    }
 
-    private fun getSnippet(
+        private fun getSnippet(
             input: CreateSnippet,
             user: UserSnippet,
             status: SnippetStatus,
@@ -300,17 +300,17 @@ class ManagerService
             )
         }
 
-    private fun snippetDto(
-        id: Long,
-        snippet: Optional<Snippet>,
-        content: String
-    ) = SnippetDto(
-        id = id,
-        name = snippet.get().name,
-        content = content,
-        compliance = snippet.get().status.status,
-        author = snippet.get().userSnippet.name,
-        language = snippet.get().language,
-        extension = snippet.get().extension,
-    )
-}
+        private fun snippetDto(
+            id: Long,
+            snippet: Optional<Snippet>,
+            content: String,
+        ) = SnippetDto(
+            id = id,
+            name = snippet.get().name,
+            content = content,
+            compliance = snippet.get().status.status,
+            author = snippet.get().userSnippet.name,
+            language = snippet.get().language,
+            extension = snippet.get().extension,
+        )
+    }
