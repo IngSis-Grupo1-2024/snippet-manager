@@ -32,9 +32,8 @@ class RunnerManager(val rest: RestTemplate, val runnerUrl: String) : Runner {
     ): RunningOutput {
         val url = "$runnerUrl/execute/formatSnippet"
 
-        val headers = HttpHeaders()
+        val headers = BasicRest.getAuthHeaders(token)
         headers.contentType = MediaType.APPLICATION_JSON
-        headers.setBearerAuth(token)
         val entity = HttpEntity(snippet, headers)
 
         val response = RestTemplate().exchange(url, HttpMethod.POST, entity, RunningOutput::class.java)
