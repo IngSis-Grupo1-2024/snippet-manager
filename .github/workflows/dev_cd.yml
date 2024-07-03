@@ -1,11 +1,21 @@
 name: "Continuous Deployment to dev"
+
 on:
   push:
     branches:
       - dev
+
 jobs:
   push_to_registry:
     uses: IngSis-Grupo1-2024/snippet-infra/.github/workflows/cd.yml@main
     with:
       image-name: snippet-manager
       env-name: dev
+
+  deploy_to_vm:
+    uses: IngSis-Grupo1-2024/snippet-infra/.github/workflows/deploy.yml@main
+    needs: push_to_registry
+    secrets: inherit 
+    with:
+      container-name: api-manager
+
