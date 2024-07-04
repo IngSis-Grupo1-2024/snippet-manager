@@ -2,6 +2,7 @@ package manager.runner.service
 
 import manager.common.bucket.BucketAPI
 import manager.manager.integration.permission.SnippetPerm
+import manager.manager.model.entity.Snippet
 import manager.manager.model.enums.PermissionType
 import manager.manager.model.enums.SnippetLanguage
 import manager.manager.repository.SnippetRepository
@@ -13,6 +14,7 @@ import manager.snippet.FormatInput
 import manager.snippet.SnippetInfo
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import java.util.*
 
 @Service
 class RunnerService
@@ -33,15 +35,7 @@ class RunnerService
             val snippet = snippetRepository.findById(snippetId.toLong())
 
             val version = fetchSnippetVersion(token, snippet.get().language.toString())
-            val snippetInfo =
-                SnippetInfo(
-                    snippet.get().name,
-                    content,
-                    snippet.get().language,
-                    version,
-                    snippet.get().extension,
-                    listOf("hi"),
-                )
+            val snippetInfo = getSnippetInfo(snippet, content, version)
 
             val response = runnerManager.runSnippet(token, snippetInfo)
             if (response.error.isNotEmpty()) {
@@ -49,8 +43,7 @@ class RunnerService
             }
             return response.output.joinToString("\n")
         }
-
-        fun formatSnippet(
+    fun formatSnippet(
             snippetId: String,
             userId: String,
             token: String,
@@ -107,4 +100,17 @@ class RunnerService
 
             return response.output.joinToString()
         }
-    }
+
+        private fun getSnippetInfo(
+            snippet: Optional<Snippet>,
+            content: String,
+            version: String
+        ) = SnippetInfo(
+            snippet.get().name,
+            content,
+            snippet.get().language,
+            version,
+            snippet.get().extension,
+            listOf("hi"),
+        )
+}
