@@ -29,9 +29,6 @@ class OAuth2ResourceServerSecurityConfiguration(
                 .anyRequest().authenticated()
         }
             .oauth2ResourceServer { it.jwt(withDefaults()) }
-            .cors {
-                it.configurationSource { CorsConfig().corsFilter() }
-            }
             .csrf {
                 it.disable()
             }
