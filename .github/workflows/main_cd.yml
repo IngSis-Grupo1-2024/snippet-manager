@@ -8,4 +8,4 @@ jobs:
     uses: IngSis-Grupo1-2024/snippet-infra/.github/workflows/cd.yml@main
     with:
       image-name: snippet-manager
-      env-name: main
+      env-name: main 
