@@ -20,7 +20,7 @@ class SnippetManagerApplication{
         return object : WebMvcConfigurer {
             override fun addCorsMappings(registry: CorsRegistry) {
                 registry.addMapping("/**")
-                    .allowedOrigins("http://localhost:5173", "https://snippet-runner-dev.duckdns.org/")
+                    .allowedOrigins("*")
                     .allowedMethods("*")
                     .allowedHeaders("*")
             }
